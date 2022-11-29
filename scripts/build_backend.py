@@ -116,10 +116,7 @@ def custom_build_cmake_clib(iface, cxx=None):
     numpy_include = np.get_include()
 
     if iface == 'dpc':
-        if IS_WIN:
-            cxx = 'icx'
-        else:
-            cxx = 'icpx'
+        cxx = 'icx'
     elif cxx is None:
         raise RuntimeError('CXX compiler shall be specified')
 
@@ -140,10 +137,6 @@ def custom_build_cmake_clib(iface, cxx=None):
         "-Dpybind11_DIR=" + pybind11.get_cmake_dir(),
         "-DCMAKE_VERBOSE_MAKEFILE=1",
     ]
-
-    if iface == 'dpc':
-        cmake_args += ["-DCMAKE_C_COMPILER_WORKS=1",
-                       "-DCMAKE_CXX_COMPILER_WORKS=1"]
 
     import multiprocessing
     cpu_count = multiprocessing.cpu_count()

@@ -125,13 +125,15 @@ else:
 
 def get_sdl_cflags():
     if IS_LIN or IS_MAC:
-        return DIST_CFLAGS + ['-fstack-protector-strong', '-fPIC',
-                              '-D_FORTIFY_SOURCE=2', '-Wformat',
-                              '-Wformat-security', '-fno-strict-overflow',
-                              '-fno-delete-null-pointer-checks']
+        if dpcpp:
+            DIST_CFLAGS.extend(['-fsycl'])
+        DIST_CFLAGS.extend(['-fstack-protector-strong', '-fPIC',
+                            '-D_FORTIFY_SOURCE=2', '-Wformat',
+                            '-Wformat-security', '-fno-strict-overflow',
+                            '-fno-delete-null-pointer-checks'])
         return DIST_CFLAGS
     if IS_WIN:
-        return DIST_CFLAGS + ['-GS']
+        return DIST_CFLAGS + ['-GS', '-fsycl']
 
 
 def get_sdl_ldflags():
@@ -178,24 +180,20 @@ def get_build_options():
     # FIXME it is a wrong place for this dependency
     if not no_dist:
         include_dir_plat.append(mpi_root + '/include')
-    using_intel = os.environ.get('CC', '') in [
+    using_intel = os.environ.get('cc', '') in [
         'icc', 'icpc', 'icl', 'dpcpp', 'icx', 'icpx']
     eca = ['-DPY_ARRAY_UNIQUE_SYMBOL=daal4py_array_API',
            '-DD4P_VERSION="' + d4p_version + '"', '-DNPY_ALLOW_THREADS=1']
     ela = []
 
-    if using_intel:
-        if not IS_MAC:
-            eca += ['-fsycl']
-        if IS_WIN:
-            include_dir_plat.append(
-                jp(os.environ.get('ICPP_COMPILER16', ''), 'compiler', 'include'))
-            eca += ['-std=c++17', '/MD']
+    if using_intel and IS_WIN:
+        include_dir_plat.append(
+            jp(os.environ.get('ICPP_COMPILER16', ''), 'compiler', 'include'))
+        eca += ['-std=c++17', '-w', '/MD', '-fsycl']
     elif not using_intel and IS_WIN:
         eca += ['-wd4267', '-wd4244', '-wd4101', '-wd4996', '/std:c++17']
     else:
-        eca += ['-std=c++17']  # '-D_GLIBCXX_USE_CXX11_ABI=0']
-    eca += ['-w']
+        eca += ['-std=c++17', '-w', ]  # '-D_GLIBCXX_USE_CXX11_ABI=0']
 
     # Security flags
     eca += get_sdl_cflags()
@@ -310,15 +308,10 @@ gen_pyx(os.path.abspath('./build'))
 
 def build_oneapi_backend():
     eca, ela, includes = get_build_options()
-    cc = 'icx'
-    if IS_WIN:
-        cxx = 'icx'
-    else:
-        cxx = 'icpx'
 
     return build_backend.build_cpp(
-        cc=cc,
-        cxx=cxx,
+        cc='icx',
+        cxx='icx',
         sources=['src/oneapi/oneapi_backend.cpp'],
         targetname='oneapi_backend',
         targetprefix='' if IS_WIN else 'lib',

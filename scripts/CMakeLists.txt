@@ -16,6 +16,9 @@
 
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
+SET (CMAKE_C_COMPILER_WORKS 1)
+SET (CMAKE_CXX_COMPILER_WORKS 1)
+
 project("oneDAL python interface"
     LANGUAGES CXX
     HOMEPAGE_URL https://github.com/oneapi-src/oneDAL
@@ -27,10 +30,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(WIN32)
-    set(SDL_FLAGS "-GS -DynamicBase")
+    set(SDL_FLAGS "-GS -DynamicBase -fsycl")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MD")
 elseif(UNIX)
-    set(SDL_FLAGS "-fstack-protector-strong -fPIC -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -fno-strict-overflow -fno-delete-null-pointer-checks")
+    set(SDL_FLAGS "-fsycl -fstack-protector-strong -fPIC -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -fno-strict-overflow -fno-delete-null-pointer-checks")
     if(APPLE)
         set(ONEDAL_PY_LINK_OPTIONS "-fwrapv")
         set(CMAKE_INSTALL_RPATH "@loader_path/../../../")
@@ -41,18 +44,6 @@ elseif(UNIX)
     set(WARNING_FLAGS "-Winit-self")
 else()
     message(FATAL_ERROR "Unsupported system.")
-endif()
-
-if(CMAKE_CXX_COMPILER MATCHES ".*icpx" OR ".*icx")
-    if(NOT APPLE)
-        set(CMAKE_CXX_FLAGS "-fsycl ${CMAKE_CXX_FLAGS}")
-    endif()
-endif()
-
-if(CMAKE_C_COMPILER MATCHES ".*icx")
-    if(NOT APPLE)
-        set(CMAKE_C_FLAGS "-fsycl ${CMAKE_C_FLAGS}")
-    endif()
 endif()
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
