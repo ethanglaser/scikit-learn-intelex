@@ -238,6 +238,16 @@ class DBSCAN(DBSCAN_original):
         self : object
             Returns a fitted instance of self.
         """
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("DBSCAN not available for GPU")
         if sklearn_check_version("1.2"):
             self._validate_params()
         elif sklearn_check_version("1.1"):
