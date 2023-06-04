@@ -271,6 +271,8 @@ def _fit(self, X, y=None, sample_weight=None):
             gpu_context = False
     except:
         gpu_context = False
+    if gpu_context:
+        raise ValueError("KMeans not available for GPU")
     init = self.init
     if sklearn_check_version('1.1'):
         if sklearn_check_version('1.2'):
