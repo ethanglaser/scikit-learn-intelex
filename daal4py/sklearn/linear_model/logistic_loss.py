@@ -90,6 +90,16 @@ def _daal4py_cross_entropy_loss_extra_args(nClasses, beta, X, y,
 
 # used by LBFGS solver
 def _daal4py_loss_and_grad(beta, objF_instance, X, y, n):
+    try:
+        from daal4py.oneapi import _get_device_name_sycl_ctxt
+        if _get_device_name_sycl_ctxt() == 'gpu':
+            gpu_context = True
+        else:
+            gpu_context = False
+    except:
+        gpu_context = False
+    if gpu_context:
+        raise ValueError("Log loss not available for GPU")
     beta_ = make2d(beta)
     res = objF_instance.compute(X, y, beta_)
     gr = res.gradientIdx.ravel()
@@ -101,6 +111,16 @@ def _daal4py_loss_and_grad(beta, objF_instance, X, y, n):
 
 # used by Newton CG method
 def _daal4py_loss_(beta, objF_instance, X, y, n, l2_unused):
+    try:
+        from daal4py.oneapi import _get_device_name_sycl_ctxt
+        if _get_device_name_sycl_ctxt() == 'gpu':
+            gpu_context = True
+        else:
+            gpu_context = False
+    except:
+        gpu_context = False
+    if gpu_context:
+        raise ValueError("Log loss not available for GPU")
     beta_ = make2d(beta)
     if beta_.shape[1] != 1 and beta_.shape[0] == 1:
         beta_ = beta_.T

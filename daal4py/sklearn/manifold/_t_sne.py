@@ -147,6 +147,16 @@ class TSNE(BaseTSNE):
 
     def _fit(self, X, skip_num_points=0):
         """Private function to fit the model using X as training data."""
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("t-SNE not available for GPU")
         if isinstance(self.init, str) and self.init == 'warn':
             warnings.warn("The default initialization in TSNE will change "
                           "from 'random' to 'pca' in 1.2.", FutureWarning)
