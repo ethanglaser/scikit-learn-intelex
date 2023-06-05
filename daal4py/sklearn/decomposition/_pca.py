@@ -371,6 +371,16 @@ class PCA(PCA_original):
         This method returns a Fortran-ordered array. To convert it to a
         C-ordered array, use 'np.ascontiguousarray'.
         """
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("PCA not available for GPU")
 
         if sklearn_check_version('1.2'):
             self._validate_params()
