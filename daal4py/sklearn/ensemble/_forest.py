@@ -371,6 +371,16 @@ class RandomForestClassifier(RandomForestClassifier_original, RandomForestBase):
         -------
         self : object
         """
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("Random Forest not available for GPU")
         if sp.issparse(y):
             raise ValueError("sparse multilabel-indicator for y is not supported.")
         if sklearn_check_version("1.2"):
@@ -934,6 +944,16 @@ class RandomForestRegressor(RandomForestRegressor_original, RandomForestBase):
         -------
         self : object
         """
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("Random Forest not available for GPU")
         if sp.issparse(y):
             raise ValueError("sparse multilabel-indicator for y is not supported.")
         if sklearn_check_version("1.2"):
