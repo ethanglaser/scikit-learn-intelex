@@ -714,6 +714,16 @@ def __logistic_regression_path(
 
 
 def daal4py_predict(self, X, resultsToEvaluate):
+    try:
+        from daal4py.oneapi import _get_device_name_sycl_ctxt
+        if _get_device_name_sycl_ctxt() == 'gpu':
+            gpu_context = True
+        else:
+            gpu_context = False
+    except:
+        gpu_context = False
+    if gpu_context:
+        raise ValueError("Log loss not available for GPU")
     check_is_fitted(self)
     if sklearn_check_version('1.0'):
         self._check_feature_names(X, reset=False)

@@ -121,6 +121,16 @@ def daal4py_fit(estimator, X, fptype):
 
 def daal4py_kneighbors(estimator, X=None, n_neighbors=None,
                        return_distance=True):
+    try:
+        from daal4py.oneapi import _get_device_name_sycl_ctxt
+        if _get_device_name_sycl_ctxt() == 'gpu':
+            gpu_context = True
+        else:
+            gpu_context = False
+    except:
+        gpu_context = False
+    if gpu_context:
+        raise ValueError("kNN not available for GPU")
     n_features = getattr(estimator, 'n_features_in_', None)
     shape = getattr(X, 'shape', None)
     if n_features and shape and len(shape) > 1 and shape[1] != n_features:
