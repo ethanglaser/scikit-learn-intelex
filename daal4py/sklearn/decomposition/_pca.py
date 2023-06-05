@@ -335,6 +335,16 @@ class PCA(PCA_original):
             Projection of X in the first principal components, where `n_samples`
             is the number of samples and `n_components` is the number of the components.
         """
+        try:
+            from daal4py.oneapi import _get_device_name_sycl_ctxt
+            if _get_device_name_sycl_ctxt() == 'gpu':
+                gpu_context = True
+            else:
+                gpu_context = False
+        except:
+            gpu_context = False
+        if gpu_context:
+            raise ValueError("PCA not available for GPU")
         _patching_status = PatchingConditionsChain(
             "sklearn.decomposition.PCA.transform")
         _dal_ready = _patching_status.and_conditions([
