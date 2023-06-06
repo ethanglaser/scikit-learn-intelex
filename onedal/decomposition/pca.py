@@ -29,11 +29,13 @@ class PCA():
         n_components=None,
         is_deterministic=True,
         method='precomputed',
-        copy=True
+        copy=True,
+        random_state=None
     ):
         self.n_components = n_components
         self.method = method
         self.is_deterministic = is_deterministic
+        self.random_state = random_state
 
     def get_onedal_params(self, data):
         return {
