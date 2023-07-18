@@ -82,7 +82,6 @@ jobs:
     displayName: 'Run jupyter notebook demo'
 
 - job: LinuxNightly
-  timeoutInMinutes: 120
   strategy:
     matrix:
       Python3.11_SklearnMain:
@@ -93,7 +92,6 @@ jobs:
   steps:
   - template: build-and-test-lnx.yml
 - job: MacOSNightly
-  timeoutInMinutes: 120
   strategy:
     matrix:
       Python3.11_SklearnMain:
@@ -106,7 +104,6 @@ jobs:
   steps:
   - template: build-and-test-mac.yml
 - job: WindowsNightly
-  timeoutInMinutes: 120
   strategy:
     matrix:
       Python3.11_SklearnMain:
