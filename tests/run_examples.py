@@ -82,6 +82,7 @@ if sycl_extention_available:
             availabe_devices.append("gpu")
     except RuntimeError:
         gpu_available = False
+        raise RuntimeError("GPU undetected or unavailable.")
     availabe_devices.append("cpu")
     # validate that host and cpu devices avaialbe for logging reasons. Examples and
     # vaidaton logic assumes that host and cpu devices are always available
