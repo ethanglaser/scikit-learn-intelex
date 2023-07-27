@@ -71,7 +71,7 @@ try:
     from daal4py.oneapi import sycl_context
 
     sycl_extention_available = True
-except ModuleNotFoundError:
+except ImportError:
     sycl_extention_available = False
 print("Sycl extensions available: {}".format(sycl_extention_available))
 
@@ -82,11 +82,17 @@ if sycl_extention_available:
             availabe_devices.append("gpu")
     except RuntimeError:
         gpu_available = False
-        raise RuntimeError("GPU undetected or unavailable.")
     availabe_devices.append("cpu")
     # validate that host and cpu devices avaialbe for logging reasons. Examples and
     # vaidaton logic assumes that host and cpu devices are always available
     print("Sycl gpu device: {}".format(gpu_available))
+
+try:
+    if not gpu_available:
+        raise RuntimeError("GPU undetected or unavailable.")
+except:
+    raise RuntimeError("SYCL extensions unavailable. Unable to run SYCL or SPMD examples.")
+
 
 
 def check_version(rule, target):
