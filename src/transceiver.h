@@ -311,7 +311,7 @@ static bool not_empty(const daal::services::SharedPtr<T> & obj)
 }
 
 template<typename T>
-static bool not_empty(const daal::data_management::interface1::NumericTablePtr & obj)
+static bool not_empty(const daal::data_management::NumericTablePtr & obj)
 {
     return obj && obj->getNumberOfRows() && obj->getNumberOfColumns();
 }

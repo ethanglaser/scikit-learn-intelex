@@ -255,7 +255,7 @@ namespace dist_custom {
             }
 
             // Here we will store the output of step3 for step5
-            daal::services::interface1::SharedPtr<daal::data_management::interface1::SerializationIface> outputOfStep3ForStep5;
+            daal::services::SharedPtr<daal::data_management::SerializationIface> outputOfStep3ForStep5;
 
             for(size_t iRound = 0; iRound < nRounds; ++iRound) {
                 // run step2 on each rank

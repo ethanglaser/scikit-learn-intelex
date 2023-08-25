@@ -29,7 +29,7 @@ namespace algorithms {
 namespace optimization_solver {
 namespace iterative_solver {
     // BatchPtr typedef not existent in older oneDAL versions
-    typedef daal::services::SharedPtr<interface1::Batch> BatchPtr;
+    typedef daal::services::SharedPtr<Batch> BatchPtr;
 
 }
 }

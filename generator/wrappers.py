@@ -139,7 +139,7 @@ ignore = {
         "firstIteration",
         "outputForStep5Required",
     ],  # internal for distributed
-    "algorithms::kmeans::init::interface1": [
+    "algorithms::kmeans::init": [
         "nRowsTotal",
         "offset",
         "seed",

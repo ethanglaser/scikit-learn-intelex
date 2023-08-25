@@ -107,7 +107,7 @@ class cpp_class(object):
         assert not partial or tpl
 
     def plus_ns(self):
-        self.name = "{}::{}".format(self.iface, self.name)
+        self.name = "{}".format(self.name)
         return self
 
 
