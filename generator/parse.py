@@ -558,10 +558,8 @@ class class_template_parser(object):
                         parent=parents,
                         iface=ctxt.gdict["ns"][-1],
                     )
-                print("IFACE:", cls.iface)
                 if ctxt.curr_class in ctxt.gdict["classes"]:
                     curr_class = ctxt.gdict["classes"][ctxt.curr_class]
-                    print("COMPARE:", curr_class.iface, ctxt.gdict["ns"][-1])
                     if curr_class.iface < ctxt.gdict["ns"][-1]:
                         old_cls = curr_class.plus_ns()
                         ctxt.gdict["classes"][ctxt.curr_class] = cls
@@ -570,7 +568,6 @@ class class_template_parser(object):
                     ctxt.gdict["classes"][old_cls.name] = old_cls
                 else:
                     ctxt.gdict["classes"][ctxt.curr_class] = cls
-                print("GDICT", ctxt.gdict)
                 # elif ctxt.template:
                 #        ctxt.gdict['error_template_string'] += \
                 #        '$FNAME:' + str(ctxt.n) + \
