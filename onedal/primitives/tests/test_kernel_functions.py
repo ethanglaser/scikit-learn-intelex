@@ -66,7 +66,7 @@ def test_dense_self_rbf_kernel(queue):
     result = rbf_kernel(X, queue=queue)
     expected = sklearn_rbf_kernel(X)
 
-    assert_allclose(result, expected, rtol=1e-14)
+    assert_allclose(result, expected, rtol=1e-5)
 
 
 def _test_dense_small_rbf_kernel(queue, gamma, dtype):

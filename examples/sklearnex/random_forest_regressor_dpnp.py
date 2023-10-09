@@ -30,6 +30,9 @@ X, y = make_regression(
     n_samples=1000, n_features=4, n_informative=2, random_state=0, shuffle=False
 )
 
+X = X.astype(np.float32)
+y = y.astype(np.float32)
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
 dpnp_X_train = dpnp.asarray(X_train, device=sycl_device)
