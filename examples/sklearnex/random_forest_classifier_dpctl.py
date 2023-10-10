@@ -37,9 +37,6 @@ X, y = make_classification(
     shuffle=False,
 )
 
-X = X.astype(np.float32)
-y = y.astype(np.float32)
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
 dpt_X_train = dpt.asarray(X_train, usm_type="device", sycl_queue=q)
