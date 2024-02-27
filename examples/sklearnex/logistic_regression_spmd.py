@@ -75,17 +75,25 @@ model_spmd.fit(dpt_X_train, dpt_y_train)
 
 y_predict = model_spmd.predict(dpt_X_test)
 
+import sys
+sys.stdout.flush()
 print("Distributed LogisticRegression results:")
+sys.stdout.flush()
 print("Coeficients on rank {}:\n{}:".format(rank, model_spmd.coef_))
+sys.stdout.flush()
 print("Intercept on rank {}:\n{}:".format(rank, model_spmd.intercept_))
+sys.stdout.flush()
 print("Ground truth (first 5 observations on rank {}):\n{}".format(rank, y_test[:5]))
+sys.stdout.flush()
 print(
     "Classification results (first 5 observations on rank {}):\n{}".format(
         rank, dpt.to_numpy(y_predict)[:5]
     )
 )
+sys.stdout.flush()
 print(
     "Accuracy for entire rank {} (2 classes): {}\n".format(
         rank, accuracy_score(y_test, dpt.to_numpy(y_predict))
     )
 )
+sys.stdout.flush()

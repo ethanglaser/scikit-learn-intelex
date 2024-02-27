@@ -219,7 +219,7 @@ def get_exe_cmd(ex, args):
     if not args.nodist and ex.endswith("spmd.py"):
         if IS_WIN:
             return 'mpiexec -localonly -n 4 "' + sys.executable + '" "' + ex + '"'
-        return 'mpirun -n 4 "' + sys.executable + '" "' + ex + '"'
+        return 'strace mpirun -n 4 "' + sys.executable + '" "' + ex + '"'
     else:
         return '"' + sys.executable + '" "' + ex + '"'
 
@@ -246,7 +246,7 @@ def run(exdir, logdir, args):
                     with open(logfn, "w") as logfile:
                         print("\n##### " + jp(dirpath, script))
                         execute_string = get_exe_cmd(jp(dirpath, script), args)
-                        if execute_string:
+                        if execute_string and "logistic_regression_spmd" in execute_string:
                             os.chdir(dirpath)
                             try:
                                 proc = subprocess.Popen(
