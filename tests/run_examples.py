@@ -65,9 +65,9 @@ else:
     logdir = jp(runner_dir, "_results", "intel64")
 
 ex_log_dirs = [
-    (jp(examples_rootdir, "daal4py"), jp(logdir, "daal4py")),
+#    (jp(examples_rootdir, "daal4py"), jp(logdir, "daal4py")),
     (jp(examples_rootdir, "sklearnex"), jp(logdir, "sklearnex")),
-    (jp(tests_rootdir, "daal4py"), jp(logdir, "daal4py")),
+#    (jp(tests_rootdir, "daal4py"), jp(logdir, "daal4py")),
 ]
 
 available_devices = []
@@ -219,7 +219,7 @@ def get_exe_cmd(ex, args):
     if not args.nodist and ex.endswith("spmd.py"):
         if IS_WIN:
             return 'mpiexec -localonly -n 4 "' + sys.executable + '" "' + ex + '"'
-        return 'mpirun -n 4 "' + sys.executable + '" "' + ex + '"'
+        return '/localdisk2/mkl/cache/stash/intel-mpi/2021.13.0-ENG/lnx/package/mpi/2021.13.0/bin/mpirun -n 4 "' + sys.executable + '" "' + ex + '"'
     else:
         return '"' + sys.executable + '" "' + ex + '"'
 
