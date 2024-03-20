@@ -90,7 +90,7 @@ dpcpp = shutil.which("icpx") is not None
 
 use_parameters_lib = (not IS_WIN) and (ONEDAL_VERSION >= 20240000)
 
-build_distribute = dpcpp and not no_dist and IS_LIN
+build_distribute = dpcpp and not no_dist
 
 daal_lib_dir = lib_dir if (IS_MAC or os.path.isdir(lib_dir)) else os.path.dirname(lib_dir)
 ONEDAL_LIBDIRS = [daal_lib_dir]
