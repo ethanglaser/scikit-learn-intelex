@@ -196,6 +196,8 @@ def custom_build_cmake_clib(
             "-DMPI_LIBS=" + MPI_LIBS,
         ]
 
+    log.info(f"Build using parameters library: {', '.join(cmake_args)}")
+
     cpu_count = multiprocessing.cpu_count()
     # limit parallel cmake jobs if memory size is insufficient
     # TODO: add on all platforms
@@ -218,3 +220,5 @@ def custom_build_cmake_clib(
     subprocess.check_call(cmake_args)
     subprocess.check_call(make_args)
     subprocess.check_call(make_install_args)
+
+    log.info(f"FINISHED")
