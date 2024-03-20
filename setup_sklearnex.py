@@ -54,7 +54,7 @@ trues = ["true", "True", "TRUE", "1", "t", "T", "y", "Y", "Yes", "yes", "YES"]
 no_dist = True if "NO_DIST" in os.environ and os.environ["NO_DIST"] in trues else False
 dpcpp = shutil.which("icpx") is not None
 
-build_distribute = dpcpp and not no_dist and IS_LIN
+build_distribute = dpcpp and not no_dist
 
 ONEDAL_VERSION = get_onedal_version(dal_root)
 
