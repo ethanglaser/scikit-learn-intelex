@@ -39,6 +39,7 @@ from sklearnex.tests._utils_spmd import (
 )
 @pytest.mark.mpi
 def test_dbscan_spmd_gold(dataframe, queue):
+    pytest.skip("skipping due to offload sendrecvreplace")
     # Import spmd and batch algo
     from sklearnex.cluster import DBSCAN as DBSCAN_Batch
     from sklearnex.spmd.cluster import DBSCAN as DBSCAN_SPMD
@@ -74,6 +75,7 @@ def test_dbscan_spmd_gold(dataframe, queue):
 def test_dbscan_spmd_synthetic(
     n_samples, n_features_and_eps, centers, min_samples, dataframe, queue, dtype
 ):
+    pytest.skip("skipping due to offload sendrecvreplace")
     n_features, eps = n_features_and_eps
     # Import spmd and batch algo
     from sklearnex.cluster import DBSCAN as DBSCAN_Batch

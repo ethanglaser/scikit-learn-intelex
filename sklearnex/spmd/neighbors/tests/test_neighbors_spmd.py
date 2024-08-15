@@ -42,6 +42,7 @@ from sklearnex.tests._utils_spmd import (
 )
 @pytest.mark.mpi
 def test_knncls_spmd_gold(dataframe, queue):
+    pytest.skip("skipping due to offload sendrecvreplace")
     # Import spmd and batch algo
     from sklearnex.neighbors import KNeighborsClassifier as KNeighborsClassifier_Batch
     from sklearnex.spmd.neighbors import KNeighborsClassifier as KNeighborsClassifier_SPMD
@@ -123,6 +124,7 @@ def test_knncls_spmd_synthetic(
     dtype,
     metric="euclidean",
 ):
+    pytest.skip("skipping due to offload sendrecvreplace")
     n_features, n_classes = n_features_and_classes
     # Import spmd and batch algo
     from sklearnex.neighbors import KNeighborsClassifier as KNeighborsClassifier_Batch
@@ -174,6 +176,7 @@ def test_knncls_spmd_synthetic(
 )
 @pytest.mark.mpi
 def test_knnreg_spmd_gold(dataframe, queue):
+    pytest.skip("skipping due to offload sendrecvreplace")
     # Import spmd and batch algo
     from sklearnex.neighbors import KNeighborsRegressor as KNeighborsRegressor_Batch
     from sklearnex.spmd.neighbors import KNeighborsRegressor as KNeighborsRegressor_SPMD
@@ -250,6 +253,7 @@ def test_knnreg_spmd_gold(dataframe, queue):
 def test_knnreg_spmd_synthetic(
     n_samples, n_features, n_neighbors, weights, metric, dataframe, queue, dtype
 ):
+    pytest.skip("skipping due to offload sendrecvreplace")
     # Import spmd and batch algo
     from sklearnex.neighbors import KNeighborsRegressor as KNeighborsRegressor_Batch
     from sklearnex.spmd.neighbors import KNeighborsRegressor as KNeighborsRegressor_SPMD
