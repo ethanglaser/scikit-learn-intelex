@@ -112,6 +112,7 @@ def test_knncls_spmd_gold(dataframe, queue):
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.mpi
+@pytest.mark.skipif(True, reason="skipping due to offload sendrecvreplace")
 def test_knncls_spmd_synthetic(
     n_samples,
     n_features_and_classes,
@@ -245,6 +246,7 @@ def test_knnreg_spmd_gold(dataframe, queue):
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.mpi
+@pytest.mark.skipif(True, reason="skipping due to offload sendrecvreplace")
 def test_knnreg_spmd_synthetic(
     n_samples, n_features, n_neighbors, weights, metric, dataframe, queue, dtype
 ):
