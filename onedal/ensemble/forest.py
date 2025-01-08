@@ -132,6 +132,11 @@ class BaseForest(BaseEstimator, BaseEnsemble, metaclass=ABCMeta):
         self.observations_per_tree_fraction = (
             self.observations_per_tree_fraction if bool(self.bootstrap) else 1.0
         )
+        try:
+            from mpi4py import MPI
+            self.observations_per_tree_fraction /= MPI.COMM_WORLD.Get_size()
+        except:
+            pass
 
         if not self.bootstrap and self.max_samples is not None:
             raise ValueError(
