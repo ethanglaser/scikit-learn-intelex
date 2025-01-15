@@ -151,7 +151,7 @@ def _check_array(
         accept_sparse=accept_sparse,
         order=order,
         copy=copy,
-        force_all_finite=force_all_finite,
+        ensure_all_finite=force_all_finite,
         ensure_2d=ensure_2d,
         accept_large_sparse=accept_large_sparse,
     )
@@ -183,7 +183,7 @@ def _check_X_y(
         dtype=dtype,
         order=order,
         copy=copy,
-        force_all_finite=force_all_finite,
+        ensure_all_finite=force_all_finite,
         ensure_2d=ensure_2d,
         accept_large_sparse=accept_large_sparse,
     )

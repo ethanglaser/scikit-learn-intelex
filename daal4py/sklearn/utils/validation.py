@@ -399,7 +399,7 @@ def _daal_check_array(
             accept_sparse=accept_sparse,
             dtype=dtype,
             copy=copy,
-            force_all_finite=force_all_finite,
+            ensure_all_finite=force_all_finite,
             accept_large_sparse=accept_large_sparse,
         )
     else:
