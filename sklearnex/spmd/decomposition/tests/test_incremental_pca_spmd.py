@@ -57,7 +57,7 @@ def test_incremental_pca_fit_spmd_gold(dataframe, queue, whiten, dtype):
     from sklearnex.preview.decomposition import IncrementalPCA
     from sklearnex.spmd.decomposition import IncrementalPCA as IncrementalPCA_SPMD
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     X = np.array(
         [
             [0.0, 0.0],
@@ -108,7 +108,7 @@ def test_incremental_pca_partial_fit_spmd_gold(
     from sklearnex.preview.decomposition import IncrementalPCA
     from sklearnex.spmd.decomposition import IncrementalPCA as IncrementalPCA_SPMD
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     X = np.array(
         [
             [0.0, 0.0],
@@ -177,7 +177,7 @@ def test_incremental_pca_fit_spmd_random(
     # Increased test dataset size requires a higher tol setting in comparison to other tests
     tol = 5e-4 if dtype == np.float32 else 1e-7
 
-    # Create data and process into dpt
+    # Create data and process into dpnp
     X = _generate_statistic_data(num_samples, num_features, dtype)
     dpt_X = _convert_to_dataframe(X, sycl_queue=queue, target_df=dataframe)
     X_test = _generate_statistic_data(num_samples // 5, num_features, dtype)
@@ -238,7 +238,7 @@ def test_incremental_pca_partial_fit_spmd_random(
 
     tol = 3e-4 if dtype == np.float32 else 1e-7
 
-    # Create data and process into dpt
+    # Create data and process into dpnp
     X = _generate_statistic_data(num_samples, num_features, dtype)
     dpt_X = _convert_to_dataframe(X, sycl_queue=queue, target_df=dataframe)
     X_test = _generate_statistic_data(num_samples // 5, num_features, dtype)

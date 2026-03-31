@@ -50,7 +50,7 @@ def test_incremental_basic_statistics_fit_spmd_gold(dataframe, queue, weighted, 
         IncrementalBasicStatistics as IncrementalBasicStatistics_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -119,7 +119,7 @@ def test_incremental_basic_statistics_partial_fit_spmd_gold(
         IncrementalBasicStatistics as IncrementalBasicStatistics_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -194,7 +194,7 @@ def test_incremental_basic_statistics_single_option_partial_fit_spmd_gold(
         IncrementalBasicStatistics as IncrementalBasicStatistics_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -267,7 +267,7 @@ def test_incremental_basic_statistics_partial_fit_spmd_synthetic(
 
     tol = 2e-3 if dtype == np.float32 else 1e-7
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = _generate_statistic_data(n_samples, n_features, dtype=dtype)
     local_data = _get_local_tensor(data)
     split_local_data = np.array_split(local_data, num_blocks)

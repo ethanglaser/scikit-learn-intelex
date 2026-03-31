@@ -49,7 +49,7 @@ def test_incremental_covariance_fit_spmd_gold(dataframe, queue, assume_centered,
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -103,7 +103,7 @@ def test_incremental_covariance_partial_fit_spmd_gold(
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -169,7 +169,7 @@ def test_incremental_covariance_partial_fit_spmd_synthetic(
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Generate data and process into dpt
+    # Generate data and process into dpnp
     data = _generate_statistic_data(n_samples, n_features, dtype=dtype)
 
     dpt_data = _convert_to_dataframe(data, sycl_queue=queue, target_df=dataframe)
