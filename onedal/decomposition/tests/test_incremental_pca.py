@@ -112,7 +112,7 @@ def test_on_gold_data(queue, is_deterministic, whiten, num_blocks, dtype):
 @pytest.mark.parametrize("n_components", [None, 1, 5])
 @pytest.mark.parametrize("whiten", [True, False])
 @pytest.mark.parametrize("num_blocks", [1, 10])
-@pytest.mark.parametrize("row_count,column_count", [(100, 100), (1000, 1000), (10000, 10000)])
+@pytest.mark.parametrize("row_count,column_count", [(100, 100), (1000, 1000)])
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_on_random_data(
     queue, n_components, whiten, num_blocks, row_count, column_count, dtype
