@@ -344,7 +344,7 @@ def test_interop_invalid_shape(dataframe, queue, data_shape):
     X = _convert_to_dataframe(X, sycl_queue=queue, target_df=dataframe)
 
     expected_err_msg = r"Input array has wrong dimensionality \(must be 2d\)."
-    if dataframe in "dpctl,dpnp":
+    if dataframe == "dpnp":
         expected_err_msg = (
             "Unable to convert from SUA interface: only 1D & 2D tensors are allowed"
         )
@@ -653,7 +653,7 @@ def test_table_writable_dlpack(queue):
     """Test if __dlpack__ attribute can be properly consumed by moving data
     to host from a SYCL device.
     """
-    xp = pytest.importorskip("dpctl.tensor")
+    xp = pytest.importorskip("dpnp")
     X = xp.eye(5, 8, dtype=xp.float32, device=queue)
     X.flags["W"] = False
     X_table = to_table(X)
