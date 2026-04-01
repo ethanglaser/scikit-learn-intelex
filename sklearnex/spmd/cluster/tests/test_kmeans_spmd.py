@@ -24,6 +24,7 @@ from onedal.tests.utils._dataframes_support import (
 )
 from sklearnex import config_context
 from sklearnex.tests.utils.spmd import (
+    _as_numpy,
     _assert_kmeans_labels_allclose,
     _assert_unordered_allclose,
     _generate_clustering_data,
@@ -150,7 +151,9 @@ def test_kmeans_spmd_synthetic(
     with config_context(array_api_dispatch=array_api_dispatch):
         spmd_model.fit(local_dpt_X_train)
     batch_model = KMeans_Batch(
-        n_clusters=n_clusters, init=spmd_model_init.cluster_centers_, random_state=0
+        n_clusters=n_clusters,
+        init=_as_numpy(spmd_model_init.cluster_centers_),
+        random_state=0,
     ).fit(X_train)
 
     atol = 1e-5 if dtype == np.float32 else 1e-7
