@@ -62,7 +62,7 @@ To install the necessary Python dependencies:
 Non-Python dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Apart from Python libraries and from the |onedal|, the following dependencies are needed in order to compile the |sklearnex|:
+Apart from Python libraries and from the |onedal| (version ``2021.4`` or higher), the following dependencies are needed in order to compile the |sklearnex|:
 
 - A C++ compiler.
 - clang-format.
@@ -125,7 +125,9 @@ An environment variable ``$DALROOT`` must be set to the path containing the |one
 
             export DALROOT="$CONDA_PREFIX"
 
-.. important:: If the |onedal| is not under a default system path, in order to be able to load it after compiling the |sklearnex|, its path must be added to an environment variable such as ``$LD_LIBRARY_PATH``, or the |sklearnex| must be built with argument ``--abs-rpath`` (see rest of this document for details).
+.. important:: On Linux*, if the |onedal| is not under a default system path, in order to be able to load it after compiling the |sklearnex|, its path must be added to an environment variable such as ``$LD_LIBRARY_PATH``, or the |sklearnex| must be built with argument ``--abs-rpath`` (see rest of this document for details).
+
+.. important:: On Windows*, if the |onedal| is installed at the system level (as opposed to being installed from ``pip`` or ``conda``) or is otherwise not under a default Python path (e.g. if building it from source), the environment variable ``%DALROOT%`` also needs to be set at runtime in order to import the Python modules that link against it.
 
 MPI
 ***
@@ -184,11 +186,11 @@ Requirements
 The following are required in order to use ``conda-build``:
 
 - Any ``conda`` distribution (`Miniforge <https://github.com/conda-forge/miniforge>`__ is recommended).
-- ``conda-build`` and ``conda-verify`` packages installed in a conda environment:
+- ``conda-build`` package installed in a conda environment:
 
     .. code-block:: bash
 
-        conda install -c conda-forge conda-build conda-verify
+        conda install -c conda-forge conda-build
 
 - On Windows*, an **external** installation of the MSVC compiler **version 2022** is required by default. Other versions can be specified in `conda-recipe/conda_build_config.yaml <https://github.com/uxlfoundation/scikit-learn-intelex/blob/main/conda-recipe/conda_build_config.yaml>`__ if needed.
 - Optionally, for DPC++ (GPU) support on Windows*, environment variable ``%DPCPPROOT%`` must be set to point to the DPC++ compiler path.
@@ -196,11 +198,29 @@ The following are required in order to use ``conda-build``:
 Instructions
 ************
 
+When building with conda, if the environment variables for the |onedal| and MPI are not set, those dependencies will be managed by conda instead, which will use their respective conda packages and set the environment variables internally during the builds.
+
+.. hint::
+
+    If there was any previous from-source installation or build from a different environment, one might need to delete the ``build/`` folder and the generated ``.so`` / ``.pyd`` modules:
+
+    .. code-block:: bash
+
+        rm -Rf build daal4py/*.so onedal/*.so
+
 To create and verify the conda package for this library, execute the following command from the root of the repository **after installing conda-build**:
 
 .. code-block:: bash
 
     conda build .
+
+.. hint::
+
+    To clear build environments afterwards, one can issue the following command from the conda environment that executed ``conda build``:
+
+    .. code-block:: bash
+
+        conda build purge
 
 Build-time Options
 ------------------
@@ -224,11 +244,11 @@ The following environment variables can be used to control setup aspects:
 
 - ``SKLEARNEX_VERSION``: sets the package version.
 - ``DALROOT``: sets the |onedal| path.
+- ``MKLROOT``: path to the oneMKL runtime libraries, which are used for the DPC module. This variable is optional and only has an effect when using the option ``abs-rpath`` on Linux* (see the rest of this page for details).
 - ``MPIROOT``: sets the path to the MPI library. If this variable is not set but ``I_MPI_ROOT`` is found, will use ``I_MPI_ROOT`` instead. Not used when using ``NO_DIST=1``.
 - ``NO_DIST``: set to '1', 'yes' or alike to build without support for distributed mode.
 - ``NO_STREAM``: set to '1', 'yes' or alike to build without support for streaming mode.
 - ``NO_DPC``: set to '1', 'yes' or alike to build without support of oneDAL DPC++ interfaces.
-- ``OFF_ONEDAL_IFACE``: set to '1' to build without the support of oneDAL interfaces.
 - ``MAKEFLAGS``: the last `-j` flag determines the number of threads for building the onedal extension. It will default to the number of CPU threads when not set.
 
 .. note:: The ``-j`` flag in the ``MAKEFLAGS`` environment variable is superseded in ``setup.py`` modes which support the ``--parallel`` and ``-j`` command line flags.
@@ -238,7 +258,7 @@ Command line arguments
 
 The following additional arguments are accepted in calls to the ``setup.py`` script:
 
-- ``--abs-rpath`` (Linux*-only): will make it add the absolute path to the |onedal| shared objects (``.so`` files) to the rpath of the |sklearnex| shared object files in order to load them automatically. This is not necessary when installing through ``pip`` or ``conda``, but can be helpful for development purposes when using a from-source build of the |onedal| that resides in a custom folder, as it won't assume that its files will be found under default system paths.
+- ``--abs-rpath`` (Linux*-only): will make it add the absolute path to the |onedal| shared objects (``.so`` files) to the rpath of the |sklearnex| shared object files in order to load them automatically, as well as the absolute path to the oneMKL shared objects (required for the DPC and SPMD modules only) if defined by environment variable ``$MKLROOT``. This is not necessary when installing through ``pip`` or ``conda``, but can be helpful for development purposes when using a from-source build of the |onedal| that resides in a custom folder, as it won't assume that its files will be found under default system paths.
 - ``--debug``: builds modules with debugging symbols and assertions enabled. Note that on Windows*, this will only add debugging symbols for the ``_onedal_py`` extension modules, but not for the ``daal4py`` extension module.
 - ``--using-lld`` (Linux*-only): makes the setup script avoid passing arguments that are not supported by LLVM's LLD linker, such as strong stack protection. This flag is required when building with the LLD linker (which can be achieved by setting environment variable ``$LDFLAGS="-fuse-ld=lld"``), but note that it **does not make the build script use LLD**, only avoids adding arguments that it doesn't support.
 
@@ -299,6 +319,23 @@ By default, a conda environment will first try to load oneTBB from its own packa
 
 In such cases, it is advised to either uninstall oneTBB from ``pip``/``conda`` (it will be loaded from the |onedal| library which links to it), or modify the order of search paths in environment variables like ``$LD_LIBRARY_PATH`` to prefer the one with which the |onedal| was compiled instead of the one from ``conda``.
 
+On Windows*, environment variable ``%TBBROOT%`` will also be inspected at runtime to search for DLL files, but note again that if there are oneTBB installations from ``pip`` or ``conda``, those will be preferred by the Python interpreter instead.
+
+Loading dependencies on Windows*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On Windows*, when dependencies such as oneTBB and oneMKL are installed through package managers like ``pip`` or ``conda``, their DLL files will be placed under paths that the Python interpreter searches by default.
+
+However, when the dependencies are installed at the system level, their DLL files will not be findable under Python paths, and the Python interpreter will not look for paths set under environment variable ``%PATH%`` that activation scripts modify.
+
+As such, when running on Windows*, the |sklearnex| will also try to load DLL files from folders specified in the ``*ROOT`` environment variables set by the activation scripts of its dependencies. This is done at runtime (meaning that the variables may differ from what was set at compile time), so if using system installs of dependencies, the activation scripts (``.bat`` files) defining these variables need to be invoked before launching the Python process.
+
+The following environment variables are used to search for DLL files on Windows*:
+
+- ``%DALROOT%``
+- ``%TBBROOT%``
+- ``%MKLROOT%`` (only for DPC module)
+
 Building with sanitizers
 ------------------------
 
@@ -330,7 +367,7 @@ The ASan runtime used by ICX is the same as the one by Clang. It's possible to p
 
     export LD_PRELOAD="$(clang -print-file-name=libclang_rt.asan-x86_64.so)"
 
-.. note:: This requires both ``clang`` and its runtime libraries to be installed. If using toolkits from ``conda-forge``, then using ``libclang_rt`` requires installing package ``compiler-rt``, in addition to ``clang`` and ``clangxx``.
+.. note:: This requires both ``clang`` and its runtime libraries to be installed. If using toolkits from ``conda-forge``, then using ``libclang_rt`` requires installing package ``compiler-rt``, in addition to ``clang`` and ``clangxx``. One might also want to install ``llvm-tools`` for enhanced debugging outputs.
 
 Then, the Python memory allocator can be set to ``malloc`` like this:
 

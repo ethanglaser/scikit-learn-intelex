@@ -20,14 +20,18 @@ import os
 import numpy as np
 import scipy.optimize as optimize
 import sklearn.linear_model._logistic as logistic_module
-from sklearn.linear_model._logistic import _LOGISTIC_SOLVER_CONVERGENCE_MSG
+from sklearn.linear_model._logistic import (
+    _LOGISTIC_SOLVER_CONVERGENCE_MSG,
+)
 from sklearn.linear_model._logistic import (
     LogisticRegression as LogisticRegression_original,
 )
 from sklearn.linear_model._logistic import (
     LogisticRegressionCV as LogisticRegressionCV_original,
 )
-from sklearn.linear_model._logistic import _check_solver
+from sklearn.linear_model._logistic import (
+    _check_solver,
+)
 from sklearn.utils import check_array, check_consistent_length, check_random_state
 from sklearn.utils.optimize import _check_optimize_result, _newton_cg
 from sklearn.utils.validation import check_is_fitted
@@ -35,7 +39,13 @@ from sklearn.utils.validation import check_is_fitted
 import daal4py as d4p
 
 from .._n_jobs_support import control_n_jobs
-from .._utils import PatchingConditionsChain, getFPType, is_sparse, sklearn_check_version
+from .._utils import (
+    PatchingConditionsChain,
+    check_is_array_api,
+    getFPType,
+    is_sparse,
+    sklearn_check_version,
+)
 from ..utils.validation import check_feature_names
 from .logistic_loss import (
     _daal4py_cross_entropy_loss_extra_args,
@@ -49,9 +59,16 @@ from .logistic_loss import (
 if sklearn_check_version("1.7.1"):
     from sklearn.utils.fixes import _get_additional_lbfgs_options_dict
 else:
+    import scipy
+
+    from .._utils import _package_check_version
+
     # From https://github.com/scikit-learn/scikit-learn/blob/760edca5fb5cc3538b98ebc55171806e2a6e3e84/sklearn/utils/fixes.py#L408
-    # This should be removed if SciPy>=1.15 becomes the minimum required at some point
+    # This should be removed if SciPy>=1.15 becomes the minimum required at some point,
+    # or if scikit-learn>=1.7.1 becomes the minimum supported version.
     def _get_additional_lbfgs_options_dict(k, v):
+        if _package_check_version("1.15", scipy.__version__):
+            return {}
         return {k: v}
 
 
@@ -433,7 +450,7 @@ def daal4py_predict(self, X, resultsToEvaluate):
     _dal_ready = _patching_status.and_conditions(
         [
             (
-                not ((not isinstance(X, np.ndarray)) and hasattr(X, "__dlpack__")),
+                not check_is_array_api(X),
                 "Array API inputs not supported.",
             )
         ]
@@ -761,7 +778,7 @@ def logistic_regression_path_dispatcher(
             ),
             (not is_sparse(X), "X is sparse. Sparse input is not supported."),
             (
-                not ((not isinstance(X, np.ndarray)) and hasattr(X, "__dlpack__")),
+                not check_is_array_api(X),
                 "Array API inputs not supported.",
             ),
             (sample_weight is None, "Sample weights are not supported."),

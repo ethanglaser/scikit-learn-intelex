@@ -21,7 +21,6 @@ import dpnp
 import numpy as np
 from mpi4py import MPI
 from scipy.special import expit
-from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
@@ -69,7 +68,7 @@ dpnp_X_train = dpnp.asarray(X_train, usm_type="device", sycl_queue=q)
 dpnp_y_train = dpnp.asarray(y_train, usm_type="device", sycl_queue=q)
 dpnp_X_test = dpnp.asarray(X_test, usm_type="device", sycl_queue=q)
 
-model_spmd = LogisticRegression()
+model_spmd = LogisticRegression(solver="newton-cg")
 model_spmd.fit(dpnp_X_train, dpnp_y_train)
 
 y_predict = model_spmd.predict(dpnp_X_test)

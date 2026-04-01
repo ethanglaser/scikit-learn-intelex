@@ -30,7 +30,7 @@ on GPU without moving the data from host to device.
 .. important::
     Array API is disabled by default in |sklearn|. In order to get array API support in the |sklearnex|, it must
     be :external+sklearn:doc:`enabled in scikit-learn <modules/array_api>`, which requires either changing
-    global settings or using a ``config_context``, plus installing additional dependencies such as ``array-api-compat``.
+    global settings or using a :doc:`config_context <config-contexts>`.
 
 When passing array API inputs whose data is on a SYCL-enabled device (e.g. an Intel GPU), as
 supported for example by `PyTorch <https://docs.pytorch.org/docs/stable/notes/get_start_xpu.html>`__
@@ -45,7 +45,7 @@ through options ``allow_sklearn_after_onedal`` (default is ``True``) and ``allow
 :doc:`patching scikit-learn <patching>` or when importing those directly from ``sklearnex``.
 
 .. note::
-    Under default settings for ``set_config`` / ``config_context``, operations that are not supported on GPU will
+    Under default settings for :obj:`sklearnex.set_config` / :obj:`sklearnex.config_context`, operations that are not supported on GPU will
     fall back to |sklearn| instead of falling back to CPU versions from the |sklearnex|.
 
 If array API is enabled for |sklearn| and the estimator being used has array API support on |sklearn| (which can be
@@ -80,7 +80,7 @@ in many cases they are.
     but this is generally not supported and users should not rely on these interchanges working reliably.
 
 .. note::
-    The ``target_offload`` option in config contexts and settings is not intended to work with array API
+    The :ref:`target_offload <target_offload>` option in config contexts and settings is not intended to work with array API
     classes that have :external+dpctl:doc:`USM data <api_reference/dpctl/memory>`. In order to ensure that computations
     happen on the intended device under array API, make sure that the data is already on the desired device.
 
@@ -94,6 +94,7 @@ The following patched classes have support for array API inputs:
 - :obj:`sklearnex.basic_statistics.BasicStatistics`
 - :obj:`sklearnex.basic_statistics.IncrementalBasicStatistics`
 - :obj:`sklearn.cluster.DBSCAN`
+- :obj:`sklearn.cluster.KMeans`
 - :obj:`sklearn.covariance.EmpiricalCovariance`
 - :obj:`sklearnex.covariance.IncrementalEmpiricalCovariance`
 - :obj:`sklearn.decomposition.PCA`
@@ -102,13 +103,23 @@ The following patched classes have support for array API inputs:
 - :obj:`sklearn.ensemble.RandomForestClassifier`
 - :obj:`sklearn.ensemble.RandomForestRegressor`
 - :obj:`sklearn.linear_model.LinearRegression`
+- :obj:`sklearn.linear_model.LogisticRegression`
 - :obj:`sklearn.linear_model.Ridge`
 - :obj:`sklearnex.linear_model.IncrementalLinearRegression`
 - :obj:`sklearnex.linear_model.IncrementalRidge`
+- :obj:`sklearn.neighbors.KNeighborsClassifier`
+- :obj:`sklearn.neighbors.KNeighborsRegressor`
+- :obj:`sklearn.neighbors.NearestNeighbors`
+- :obj:`sklearn.neighbors.LocalOutlierFactor`
 - :obj:`sklearn.svm.NuSVC`
 - :obj:`sklearn.svm.NuSVR`
 - :obj:`sklearn.svm.SVC`
 - :obj:`sklearn.svm.SVR`
+
+.. note::
+    In the cases where |sklearn| does not have array API support but the |sklearnex| does,
+    there might be some methods where array API support is incomplete - see details in the
+    next subsection.
 
 .. note::
     While full array API support is currently not implemented for all classes, |dpnp_array| inputs are supported
@@ -120,7 +131,45 @@ The following patched classes have support for array API inputs:
     array API compliant. For example, ensemble algorithms contain decision tree estimators result objects which
     do not comply with the array API standard.
 
+Coverage of array API support
+-----------------------------
 
+All of the classes with array API support in the |sklearnex| have full support for core
+methods common to base classes for regression and classification:
+
+- ``.fit()``
+- ``.predict()``
+- ``.predict_proba()``
+- ``.predict_log_proba()``
+- ``.score()``
+
+However, some classes have additional methods that might not be fully covered by array API
+support when the corresponding class from stock |sklearn| does not support array API. For
+example, :obj:`sklearn.ensemble.RandomForestClassifier` also offers methods
+:meth:`sklearn.ensemble.RandomForestClassifier.apply` and
+:meth:`sklearn.ensemble.RandomForestClassifier.decision_path()`, which do not have
+accelerated analogs in the |sklearnex| and thus rely on |sklearn| for the computations.
+
+Calling methods such as ``.apply()`` from a ``RandomForestClassifier`` from the |sklearnex|
+that was fitted to array API inputs will work, but it will do so by transferring the data
+to host if not already there, passing the intermediate object to |sklearn|, and outputting
+a host NumPy array, with some exceptions where |dpnp_array| classes might be returned.
+
+Similarly, :obj:`sklearn.neighbors.KNeighborsClassifier` also offers methods such as
+:meth:`~sklearn.neighbors.KNeighborsClassifier.radius_neighbors` and
+:meth:`~sklearn.neighbors.KNeighborsClassifier.kneighbors_graph`, which do not have
+accelerated analogs in the |sklearnex| and thus rely on |sklearn| for the computations.
+Calling such methods from a KNN estimator from the |sklearnex| that was fitted to array
+API inputs will work, but it will do so by transferring the data to host if not already
+there, passing the intermediate object to |sklearn|, and outputting a host NumPy array.
+
+Note that some cases of estimator-specific methods are still fully array API compatible -
+for example, :meth:`sklearn.neighbors.NearestNeighbors.kneighbors` will produce outputs
+of array API classes when fitted to them.
+
+For :obj:`sklearn.linear_model.LogisticRegression`, array API coverage is limited to cases where the input array
+is allocated on a GPU device, so passing array API inputs on CPU other than NumPy arrays will not result
+in calling accelerated routines from the |sklearnex|.
 
 Example usage
 =============
