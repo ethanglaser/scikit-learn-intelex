@@ -15,20 +15,16 @@
 # ==============================================================================
 
 import inspect
-import logging
 from functools import wraps
 from operator import xor
 
 import numpy as np
 from sklearn import get_config
 
-from ._config import _get_config
-from .datatypes import copy_to_dpnp, copy_to_usm, dlpack_to_numpy
+from .datatypes import copy_to_dpnp, dlpack_to_numpy
 from .utils import _sycl_queue_manager as QM
 from .utils._array_api import _asarray, _get_sycl_namespace, _is_numpy_namespace
 from .utils._third_party import is_dpnp_ndarray
-
-logger = logging.getLogger("sklearnex")
 
 
 def supports_queue(func):

@@ -21,7 +21,6 @@ from onedal.tests.utils._dataframes_support import (
     _convert_to_dataframe,
     get_dataframes_and_queues,
 )
-from sklearnex import config_context
 from sklearnex.tests.utils.spmd import (
     _generate_clustering_data,
     _get_local_tensor,
@@ -36,7 +35,7 @@ from sklearnex.tests.utils.spmd import (
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.mpi
 def test_dbscan_spmd_gold(dataframe, queue):
@@ -67,17 +66,10 @@ def test_dbscan_spmd_gold(dataframe, queue):
 @pytest.mark.parametrize("min_samples", [2, 5, 15])
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-@pytest.mark.parametrize(
-    "use_raw_input,array_api_dispatch",
-    [
-        (True, False),
-        (False, True),
-        (False, False),
-    ],
-)
+@pytest.mark.parametrize("array_api_dispatch", [True, False])
 @pytest.mark.mpi
 def test_dbscan_spmd_synthetic(
     n_samples,
@@ -87,7 +79,6 @@ def test_dbscan_spmd_synthetic(
     dataframe,
     queue,
     dtype,
-    use_raw_input,
     array_api_dispatch,
 ):
     n_features, eps = n_features_and_eps
@@ -104,10 +95,8 @@ def test_dbscan_spmd_synthetic(
     )
 
     # Ensure labels from fit of batch algo matches spmd
-    # Configure raw input status and array_api_dispatch for spmd estimator
-    with config_context(
-        use_raw_input=use_raw_input, array_api_dispatch=array_api_dispatch
-    ):
+    # Configure array API dispatch for spmd estimator
+    with config_context(array_api_dispatch=array_api_dispatch):
         spmd_model = DBSCAN_SPMD(eps=eps, min_samples=min_samples).fit(local_dpt_data)
     batch_model = DBSCAN_Batch(eps=eps, min_samples=min_samples).fit(data)
 

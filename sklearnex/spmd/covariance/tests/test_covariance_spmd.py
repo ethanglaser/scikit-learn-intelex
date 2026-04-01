@@ -23,7 +23,6 @@ from onedal.tests.utils._dataframes_support import (
     _convert_to_dataframe,
     get_dataframes_and_queues,
 )
-from sklearnex import config_context
 from sklearnex.tests.utils.spmd import (
     _generate_statistic_data,
     _get_local_tensor,
@@ -37,7 +36,7 @@ from sklearnex.tests.utils.spmd import (
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.mpi
 def test_covariance_spmd_gold(dataframe, queue):
@@ -86,24 +85,10 @@ def test_covariance_spmd_gold(dataframe, queue):
     get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-@pytest.mark.parametrize(
-    "use_raw_input,array_api_dispatch",
-    [
-        (True, False),
-        (False, True),
-        (False, False),
-    ],
-)
+@pytest.mark.parametrize("array_api_dispatch", [True, False])
 @pytest.mark.mpi
 def test_covariance_spmd_synthetic(
-    n_samples,
-    n_features,
-    assume_centered,
-    dataframe,
-    queue,
-    dtype,
-    use_raw_input,
-    array_api_dispatch,
+    n_samples, n_features, assume_centered, dataframe, queue, dtype, array_api_dispatch
 ):
     # Import spmd and batch algo
     from sklearnex.preview.covariance import (
@@ -119,10 +104,7 @@ def test_covariance_spmd_synthetic(
     )
 
     # Ensure results of batch algo match spmd
-    # Configure raw input status and array_api_dispatch for spmd estimator
-    with config_context(
-        use_raw_input=use_raw_input, array_api_dispatch=array_api_dispatch
-    ):
+    with config_context(array_api_dispatch=array_api_dispatch):
         spmd_result = EmpiricalCovariance_SPMD(assume_centered=assume_centered).fit(
             local_dpt_data
         )

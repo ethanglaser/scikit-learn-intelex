@@ -23,7 +23,6 @@ from onedal.tests.utils._dataframes_support import (
     _convert_to_dataframe,
     get_dataframes_and_queues,
 )
-from sklearnex import config_context
 from sklearnex.tests.utils.spmd import (
     _generate_regression_data,
     _get_local_tensor,
@@ -37,7 +36,7 @@ from sklearnex.tests.utils.spmd import (
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("fit_intercept", [True, False])
 @pytest.mark.parametrize("macro_block", [None, 1024])
@@ -52,7 +51,7 @@ def test_incremental_linear_regression_fit_spmd_gold(
         IncrementalLinearRegression as IncrementalLinearRegression_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     X = np.array(
         [
             [0.0, 0.0],
@@ -112,7 +111,7 @@ def test_incremental_linear_regression_fit_spmd_gold(
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("fit_intercept", [True, False])
 @pytest.mark.parametrize("num_blocks", [1, 2])
@@ -128,7 +127,7 @@ def test_incremental_linear_regression_partial_fit_spmd_gold(
         IncrementalLinearRegression as IncrementalLinearRegression_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     X = np.array(
         [
             [0.0, 0.0],
@@ -196,7 +195,7 @@ def test_incremental_linear_regression_partial_fit_spmd_gold(
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("fit_intercept", [True, False])
 @pytest.mark.parametrize("num_samples", [100, 1000])
@@ -215,7 +214,7 @@ def test_incremental_linear_regression_fit_spmd_random(
 
     tol = 5e-3 if dtype == np.float32 else 1e-7
 
-    # Generate random data and process into dpt
+    # Generate random data and process into dpnp
     X_train, X_test, y_train, _ = _generate_regression_data(
         num_samples, num_features, dtype
     )
@@ -261,7 +260,7 @@ def test_incremental_linear_regression_fit_spmd_random(
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("fit_intercept", [True, False])
 @pytest.mark.parametrize("num_blocks", [1, 2])
@@ -269,14 +268,7 @@ def test_incremental_linear_regression_fit_spmd_random(
 @pytest.mark.parametrize("num_features", [5, 10])
 @pytest.mark.parametrize("macro_block", [None, 1024])
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-@pytest.mark.parametrize(
-    "use_raw_input,array_api_dispatch",
-    [
-        (True, False),
-        (False, True),
-        (False, False),
-    ],
-)
+@pytest.mark.parametrize("array_api_dispatch", [True, False])
 @pytest.mark.mpi
 def test_incremental_linear_regression_partial_fit_spmd_random(
     dataframe,
@@ -287,7 +279,6 @@ def test_incremental_linear_regression_partial_fit_spmd_random(
     num_features,
     macro_block,
     dtype,
-    use_raw_input,
     array_api_dispatch,
 ):
     # Import spmd and non-SPMD algo
@@ -298,7 +289,7 @@ def test_incremental_linear_regression_partial_fit_spmd_random(
 
     tol = 5e-3 if dtype == np.float32 else 1e-7
 
-    # Generate random data and process into dpt
+    # Generate random data and process into dpnp
     X_train, X_test, y_train, _ = _generate_regression_data(
         num_samples, num_features, dtype, 573
     )
@@ -335,10 +326,8 @@ def test_incremental_linear_regression_partial_fit_spmd_random(
         dpt_X = _convert_to_dataframe(X_split[i], sycl_queue=queue, target_df=dataframe)
         dpt_y = _convert_to_dataframe(y_split[i], sycl_queue=queue, target_df=dataframe)
 
-        # Configure raw input status and array_api_dispatch for spmd estimator
-        with config_context(
-            use_raw_input=use_raw_input, array_api_dispatch=array_api_dispatch
-        ):
+        # Configure array API dispatch status for spmd estimator
+        with config_context(array_api_dispatch=array_api_dispatch):
             inclin_spmd.partial_fit(local_dpt_X, local_dpt_y)
         inclin.partial_fit(dpt_X, dpt_y)
 
@@ -348,10 +337,7 @@ def test_incremental_linear_regression_partial_fit_spmd_random(
             _as_numpy(inclin.intercept_), _as_numpy(inclin_spmd.intercept_), atol=tol
         )
 
-    # Configure raw input status and array_api_dispatch for spmd estimator
-    with config_context(
-        use_raw_input=use_raw_input, array_api_dispatch=array_api_dispatch
-    ):
+    with config_context(array_api_dispatch=array_api_dispatch):
         y_pred_spmd = inclin_spmd.predict(dpt_X_test)
     y_pred = inclin.predict(dpt_X_test)
 
