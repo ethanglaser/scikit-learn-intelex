@@ -113,7 +113,8 @@ def dispatch(
     """
 
     if get_config()["use_raw_input"]:
-        return branches["onedal"](obj, *args, **kwargs)
+        with QM.manage_global_queue(None, *args) as queue:
+            return branches["onedal"](obj, *args, **kwargs, queue=queue)
 
     # Determine if array_api dispatching is enabled, and if estimator is capable
     onedal_array_api = _array_api_offload() and get_tags(obj).onedal_array_api
@@ -122,6 +123,7 @@ def dispatch(
     # backend can only be a boolean or None, None signifies an unverified backend
     backend: "bool | None" = None
 
+    # TODO validate if this comment is valid (e.g. X on GPU, y on CPU)
     # The _sycl_queue_manager verifies all arguments are on a single SYCL device or
     # cpu and will otherwise throw an error. If located on a non-SYCL, non-CPU
     # device, a special queue is set which will cause a failure in ``_get_backend``
@@ -181,8 +183,38 @@ def wrap_output_data(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, *args, **kwargs) -> Any:
         result = func(self, *args, **kwargs)
+        # In case ARRAY API is enabled the result is already converted to the required type
+        if _array_api_offload() and get_tags(self).onedal_array_api:
+            # When transform_output is polars/pandas, sklearn's _set_output
+            # wrapper calls pl.DataFrame(result) which can't handle GPU arrays.
+            # Transfer to host so sklearn can wrap into the requested format.
+            if func.__name__ in ("transform", "fit_transform") and (
+                get_config().get("transform_output")
+                not in (
+                    "default",
+                    None,
+                )
+                or getattr(self, "_sklearn_output_config", {}).get("transform", "default")
+                != "default"
+            ):
+                _, (result,) = _transfer_to_host(result)
+            return result
         if not (len(args) == 0 and len(kwargs) == 0):
             data = (*args, *kwargs.values())[0]
+            # When transform_output is polars/pandas, sklearn's _set_output
+            # wrapper calls pl.DataFrame(result) which can't handle GPU arrays.
+            # Transfer to host so sklearn can wrap into the requested format.
+            if func.__name__ in ("transform", "fit_transform") and (
+                get_config().get("transform_output")
+                not in (
+                    "default",
+                    None,
+                )
+                or getattr(self, "_sklearn_output_config", {}).get("transform", "default")
+                != "default"
+            ):
+                _, (result,) = _transfer_to_host(result)
+                return result
             # Remove check for result __sycl_usm_array_interface__ on deprecation of use_raw_inputs
             if (
                 usm_iface := getattr(data, "__sycl_usm_array_interface__", None)
@@ -200,7 +232,11 @@ def wrap_output_data(func: Callable) -> Callable:
                 if hasattr(data, "dtype"):
                     xp, is_array_api = get_namespace(data)
                     if is_array_api and not _is_numpy_namespace(xp):
-                        result = _asarray(result, xp, device=data.device)
+                        device = getattr(data, "device", None)
+                        if isinstance(result, tuple):
+                            result = tuple(xp.asarray(r, device=device) for r in result)
+                        elif not isinstance(result, (int, float)):
+                            result = xp.asarray(result, device=device)
         return result
 
     return wrapper
