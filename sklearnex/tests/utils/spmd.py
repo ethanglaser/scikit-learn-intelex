@@ -32,7 +32,11 @@ except (ImportError, ModuleNotFoundError):
     mpi_libs_available = False
 
 _mpi_libs_and_gpu_available = mpi_libs_available and gpu_is_available
-
+if not _mpi_libs_and_gpu_available:
+    raise ValueError(
+          f"mpi_libs_available: {mpi_libs_available}, "
+          f"gpu_is_available: {gpu_is_available if mpi_libs_available else 'N/A (import failed)'}"
+      )
 
 def _get_local_tensor(full_data):
     """Splits data across ranks.
