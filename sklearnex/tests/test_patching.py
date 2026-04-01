@@ -539,7 +539,7 @@ def test_standard_estimator_patching(caplog, dataframe, queue, dtype, estimator,
         (
             dataframe == "array_api"
             or (
-                dataframe in ["dpctl", "dpnp"]
+                dataframe in ["dpnp"]
                 and (not queue or not getattr(queue.sycl_device, "is_gpu", False))
             )
         )
