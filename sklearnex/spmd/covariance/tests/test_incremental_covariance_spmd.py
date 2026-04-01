@@ -36,7 +36,7 @@ from sklearnex.tests.utils.spmd import (
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("assume_centered", [True, False])
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
@@ -48,7 +48,7 @@ def test_incremental_covariance_fit_spmd_gold(dataframe, queue, assume_centered,
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -87,7 +87,7 @@ def test_incremental_covariance_fit_spmd_gold(dataframe, queue, assume_centered,
 )
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.parametrize("num_blocks", [1, 2])
 @pytest.mark.parametrize("assume_centered", [True, False])
@@ -102,7 +102,7 @@ def test_incremental_covariance_partial_fit_spmd_gold(
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Create gold data and process into dpt
+    # Create gold data and process into dpnp
     data = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -148,7 +148,7 @@ def test_incremental_covariance_partial_fit_spmd_gold(
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize(
     "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
+    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
 )
 @pytest.mark.mpi
 def test_incremental_covariance_partial_fit_spmd_synthetic(
@@ -166,7 +166,7 @@ def test_incremental_covariance_partial_fit_spmd_synthetic(
         IncrementalEmpiricalCovariance as IncrementalEmpiricalCovariance_SPMD,
     )
 
-    # Generate data and process into dpt
+    # Generate data and process into dpnp
     data = _generate_statistic_data(n_samples, n_features, dtype=dtype)
 
     dpt_data = _convert_to_dataframe(data, sycl_queue=queue, target_df=dataframe)
