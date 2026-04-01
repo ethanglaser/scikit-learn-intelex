@@ -125,7 +125,14 @@ def support_input_format(func):
         if "queue" not in kwargs and "queue" in inspect.signature(func).parameters:
             if usm_iface := getattr(args[0], "__sycl_usm_array_interface__", None):
                 kwargs["queue"] = usm_iface["syclobj"]
-        return invoke_func(self, *args, **kwargs)
+        result = invoke_func(self, *args, **kwargs)
+
+        if get_config().get("transform_output") in ("default", None):
+            input_array_api = getattr(data, "__array_namespace__", lambda: None)()
+            if input_array_api and not _is_numpy_namespace(input_array_api):
+                input_array_api_device = data.device
+                result = _asarray(result, input_array_api, device=input_array_api_device)
+        return result
 
     return wrapper_impl
 
