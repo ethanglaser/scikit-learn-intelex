@@ -28,6 +28,7 @@ from daal4py.sklearn._utils import daal_check_version, sklearn_check_version
 from onedal.linear_model import (
     IncrementalLinearRegression as onedal_IncrementalLinearRegression,
 )
+
 from .._device_offload import dispatch, wrap_output_data
 from .._utils import (
     PatchingConditionsChain,
