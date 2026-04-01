@@ -125,11 +125,20 @@ def support_input_format(func):
         if "queue" not in kwargs and "queue" in inspect.signature(func).parameters:
             if usm_iface := getattr(args[0], "__sycl_usm_array_interface__", None):
                 kwargs["queue"] = usm_iface["syclobj"]
-        result = invoke_func(self, *args, **kwargs)
 
-        if len(args) == 0 and len(kwargs) == 0:
-            # no arguments, there's nothing we can deduce from them -> just call the function
-            return invoke_func(self, *args, **kwargs)
+        if kwargs.get("queue") is not None:
+            # Device path — function accepts queue, pass device data directly
+            result = invoke_func(self, *args, **kwargs)
+        else:
+            # Host path — sklearn function or host data, transfer to host
+            if len(args) == 0 and len(kwargs) == 0:
+                return invoke_func(self, *args, **kwargs)
+
+            with QM.manage_global_queue(None, *args) as queue:
+                hostargs, hostkwargs = _get_host_inputs(*args, **kwargs)
+                result = invoke_func(self, *hostargs, **hostkwargs)
+                if queue and hasattr(args[0], "__sycl_usm_array_interface__"):
+                    return copy_to_dpnp(queue, result)
 
         data = (*args, *kwargs.values())[0]
         if get_config().get("transform_output") in ("default", None):
