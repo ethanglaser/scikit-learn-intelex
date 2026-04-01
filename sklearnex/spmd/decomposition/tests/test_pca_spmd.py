@@ -114,9 +114,7 @@ def test_pca_spmd_synthetic(
     )
 
     # Ensure results of batch algo match spmd
-    spmd_result = PCA_SPMD(n_components=n_components, whiten=whiten).fit(
-        local_dpt_data
-    )
+    spmd_result = PCA_SPMD(n_components=n_components, whiten=whiten).fit(local_dpt_data)
     batch_result = PCA_Batch(n_components=n_components, whiten=whiten).fit(data)
 
     tol = 1e-3 if dtype == np.float32 else 1e-7

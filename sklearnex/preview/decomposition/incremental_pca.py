@@ -144,9 +144,7 @@ class IncrementalPCA(oneDALEstimator, _sklearn_IncrementalPCA):
 
         if check_input:
             xp, _ = get_namespace(X)
-            X = validate_data(
-                self, X, dtype=[xp.float64, xp.float32], reset=first_pass
-            )
+            X = validate_data(self, X, dtype=[xp.float64, xp.float32], reset=first_pass)
 
         n_samples, n_features = X.shape
 

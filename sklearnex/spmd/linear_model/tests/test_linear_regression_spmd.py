@@ -105,9 +105,7 @@ def test_linear_spmd_gold(dataframe, queue):
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.mpi
-def test_linear_spmd_synthetic(
-    n_samples, n_features, dataframe, queue, dtype
-):
+def test_linear_spmd_synthetic(n_samples, n_features, dataframe, queue, dtype):
     # Import spmd and batch algo
     from sklearnex.linear_model import LinearRegression as LinearRegression_Batch
     from sklearnex.spmd.linear_model import LinearRegression as LinearRegression_SPMD

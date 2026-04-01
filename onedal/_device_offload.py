@@ -26,6 +26,7 @@ from .utils import _sycl_queue_manager as QM
 from .utils._array_api import _asarray, _get_sycl_namespace, _is_numpy_namespace
 from .utils._third_party import is_dpnp_ndarray
 
+
 def supports_queue(func):
     """Decorator that updates the global queue before function evaluation.
 

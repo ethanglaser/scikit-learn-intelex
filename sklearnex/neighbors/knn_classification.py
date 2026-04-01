@@ -169,9 +169,7 @@ class KNeighborsClassifier(KNeighborsDispatchingBase, _sklearn_KNeighborsClassif
         )
 
         # Process classification targets before passing to onedal
-        self._process_classification_targets(
-            y, skip_validation=False
-        )
+        self._process_classification_targets(y, skip_validation=False)
 
         # Call onedal backend
         onedal_params = {

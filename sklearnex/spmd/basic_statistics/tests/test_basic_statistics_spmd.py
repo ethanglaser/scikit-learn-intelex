@@ -84,9 +84,7 @@ def test_basic_stats_spmd_gold(dataframe, queue):
     get_dataframes_and_queues(dataframe_filter_="dpnp,dpctl", device_filter_="gpu"),
 )
 @pytest.mark.mpi
-def test_basic_stats_spmd_synthetic(
-    n_samples, n_features, dataframe, queue, dtype
-):
+def test_basic_stats_spmd_synthetic(n_samples, n_features, dataframe, queue, dtype):
     # Import spmd and batch algo
     from onedal.basic_statistics import BasicStatistics as BasicStatistics_Batch
     from sklearnex.spmd.basic_statistics import BasicStatistics as BasicStatistics_SPMD

@@ -115,9 +115,7 @@ def test_logistic_spmd_gold(dataframe, queue):
 )
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.mpi
-def test_logistic_spmd_synthetic(
-    n_samples, n_features, C, tol, dataframe, queue, dtype
-):
+def test_logistic_spmd_synthetic(n_samples, n_features, C, tol, dataframe, queue, dtype):
     # TODO: Resolve numerical issues when n_rows_rank < n_cols
     if n_samples <= n_features:
         pytest.skip("Numerical issues when rank rows < columns")

@@ -76,9 +76,7 @@ class DBSCAN(oneDALEstimator, _sklearn_DBSCAN):
 
     def _onedal_fit(self, X, y, sample_weight=None, queue=None):
         xp, _ = get_namespace(X, y, sample_weight)
-        X = validate_data(
-            self, X, accept_sparse="csr", dtype=[xp.float64, xp.float32]
-        )
+        X = validate_data(self, X, accept_sparse="csr", dtype=[xp.float64, xp.float32])
         if sample_weight is not None:
             sample_weight = _check_sample_weight(
                 sample_weight, X, dtype=[xp.float64, xp.float32]
