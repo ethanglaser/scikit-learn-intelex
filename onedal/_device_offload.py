@@ -127,6 +127,11 @@ def support_input_format(func):
                 kwargs["queue"] = usm_iface["syclobj"]
         result = invoke_func(self, *args, **kwargs)
 
+        if len(args) == 0 and len(kwargs) == 0:
+            # no arguments, there's nothing we can deduce from them -> just call the function
+            return invoke_func(self, *args, **kwargs)
+
+        data = (*args, *kwargs.values())[0]
         if get_config().get("transform_output") in ("default", None):
             input_array_api = getattr(data, "__array_namespace__", lambda: None)()
             if input_array_api and not _is_numpy_namespace(input_array_api):
