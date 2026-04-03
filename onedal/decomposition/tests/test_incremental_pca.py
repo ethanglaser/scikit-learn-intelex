@@ -113,7 +113,9 @@ def test_on_gold_data(queue, is_deterministic, whiten, num_blocks, dtype):
 @pytest.mark.parametrize("whiten", [True, False])
 @pytest.mark.parametrize("num_blocks", [1, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
-@pytest.mark.parametrize("column_count", [10, 99]) # TODO: resolve nan location mismatch error
+@pytest.mark.parametrize(
+    "column_count", [10, 99]
+)  # TODO: resolve nan location mismatch error
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_on_random_data(
     queue, n_components, whiten, num_blocks, row_count, column_count, dtype
