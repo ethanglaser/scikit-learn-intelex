@@ -120,7 +120,7 @@ def test_on_gold_data(queue, is_deterministic, whiten, num_blocks, dtype):
         pytest.param(
             100,
             marks=pytest.mark.xfail(
-                reason="Known NaN location mismatch in IncrementalPCA random-data test for column_count=100"
+                reason="TODO: resolve known NaN location mismatch in IncrementalPCA random-data test for column_count>=row count"
             ),
         ),
     ],
