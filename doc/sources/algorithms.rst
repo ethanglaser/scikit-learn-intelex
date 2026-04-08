@@ -56,7 +56,7 @@ Classification
        - ``criterion`` != `'gini'`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.ensemble.ExtraTreesClassifier`
@@ -67,7 +67,7 @@ Classification
        - ``criterion`` != `'gini'`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.neighbors.KNeighborsClassifier`
@@ -92,7 +92,9 @@ Classification
        - ``class_weight`` != ``None``
        - Solver ``'newton-cg'`` with ``fit_intercept`` = ``False`` is not supported
      - Sparse data is not supported.
-     - Solver ``'newton-cg'`` is **only** available in :doc:`preview mode <preview>`.
+     - Solver ``'newton-cg'`` is **only** available in :doc:`preview mode <preview>`. **Important:** this estimator should not be used
+       in parallel Python threads - for concurrent fits (e.g. from :obj:`sklearn.model_selection.GridSearchCV`),
+       process-based parallelism should be used instead (default backend for :mod:`joblib`).
    * - :obj:`sklearn.linear_model.LogisticRegressionCV`
      - All parameters are supported except:
 
@@ -130,7 +132,7 @@ Regression
        - ``criterion`` != ``'squared_error'``
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.ensemble.ExtraTreesRegressor`
      - All parameters are supported except:
@@ -140,7 +142,7 @@ Regression
        - ``criterion`` != ``'squared_error'``
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.neighbors.KNeighborsRegressor`
      -
@@ -320,10 +322,6 @@ Other Tasks
        - Data with more than 3 dimensions is not supported
        - Only ``np.ndarray``, ``pd.DataFrame`` and ``pd.Series`` inputs are supported.
      - 
-   * - :obj:`sklearn.utils.assert_all_finite`
-     - All parameters are supported
-     - Only dense data is supported
-     - 
    * - :obj:`sklearn.metrics.pairwise_distances`
      - All parameters are supported except:
 
@@ -341,7 +339,7 @@ Other Tasks
        - ``sample_weight`` != `None`
        - ``max_fpr`` != `None`
        - ``multi_class`` != `None`
-     - No limitations
+     - Only binary ``y_true`` is supported
      - 
 
 on GPU
@@ -384,7 +382,7 @@ Classification
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.ensemble.ExtraTreesClassifier`
@@ -397,7 +395,7 @@ Classification
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.neighbors.KNeighborsClassifier`
@@ -408,6 +406,11 @@ Classification
        - ``metric`` not in [``'euclidean'``, ``'manhattan'``, ``'minkowski'``, ``'chebyshev'``, ``'cosine'``]
      - Only dense data is supported.
      - Number of classes must be at least 2.
+       The following methods are not accelerated by |sklearnex| and will
+       fall back to |sklearn| on CPU, returning NumPy arrays when using
+       array API inputs:
+       :meth:`~sklearn.neighbors.KNeighborsClassifier.radius_neighbors`,
+       :meth:`~sklearn.neighbors.KNeighborsClassifier.radius_neighbors_graph`.
    * - :obj:`sklearn.linear_model.LogisticRegression`
      - All parameters are supported except:
 
@@ -442,7 +445,7 @@ Regression
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.ensemble.ExtraTreesRegressor`
      - All parameters are supported except:
@@ -454,15 +457,20 @@ Regression
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.neighbors.KNeighborsRegressor`
      - All parameters are supported except:
 
        - ``algorithm`` != ``'brute'``
        - ``weights`` = ``'callable'``
-       - ``metric`` != ``'euclidean'`` or ``'minkowski'`` with ``p`` != ``2``
-     - Only dense data is supported
+       - ``metric`` not in [``'euclidean'``, ``'manhattan'``, ``'minkowski'``, ``'chebyshev'``, ``'cosine'``]
+     - Only dense data is supported.
+       The following methods are not accelerated by |sklearnex| and will
+       fall back to |sklearn| on CPU, returning NumPy arrays when using
+       array API inputs:
+       :meth:`~sklearn.neighbors.KNeighborsRegressor.radius_neighbors`,
+       :meth:`~sklearn.neighbors.KNeighborsRegressor.radius_neighbors_graph`.
    * - :obj:`sklearn.linear_model.Ridge`
      - All parameters are supported except:
 
@@ -550,7 +558,6 @@ Anomaly Detection
      - All parameters are supported except:
 
        - ``algorithm`` != ``'brute'``
-       - ``weights`` = ``'callable'``
        - ``metric`` not in [``'euclidean'``, ``'manhattan'``, ``'minkowski'``, ``'chebyshev'``, ``'cosine'``]
      - Only dense data is supported
      - If using :doc:`target_offload <config-contexts>`, some computations outside of neighbor calculations (related to thresholds for outlierness) might happen on CPU.
@@ -570,9 +577,19 @@ Nearest Neighbors
      - All parameters are supported except:
 
        - ``algorithm`` != ``'brute'``
-       - ``weights`` = ``'callable'``
        - ``metric`` not in [``'euclidean'``, ``'manhattan'``, ``'minkowski'``, ``'chebyshev'``, ``'cosine'``]
-     - Only dense data is supported
+     - Only dense data is supported.
+       The following methods are not accelerated by |sklearnex| and will
+       fall back to |sklearn| on CPU, returning NumPy arrays when using
+       array API inputs:
+       :meth:`~sklearn.neighbors.NearestNeighbors.radius_neighbors`,
+       :meth:`~sklearn.neighbors.NearestNeighbors.radius_neighbors_graph`.
+   * - :obj:`sklearn.neighbors.LocalOutlierFactor`
+     - All parameters are supported except:
+
+       - ``algorithm`` != ``'brute'``
+       - ``metric`` not in [``'euclidean'``, ``'manhattan'``, ``'minkowski'``, ``'chebyshev'``, ``'cosine'``]
+     - Only dense data is supported.
 
 Other Tasks
 ***********
@@ -627,7 +644,7 @@ Classification
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.ensemble.ExtraTreesClassifier`
@@ -640,7 +657,7 @@ Classification
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
      - Number of classes must be at least 2.
    * - :obj:`sklearn.neighbors.KNeighborsClassifier`
@@ -662,7 +679,7 @@ Classification
        - ``intercept_scaling`` != `1`
        - ``warm_start`` = ``True``
        - ``l1_ratio`` != ``0``
-     - No limitations
+     - Method ``score`` is not supported.
      - Only binary classification is supported
 
 Regression
@@ -686,7 +703,7 @@ Regression
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.ensemble.ExtraTreesRegressor`
      - All parameters are supported except:
@@ -698,7 +715,7 @@ Regression
        - ``sample_weight`` != `None`
        - ``n_estimators`` > ``6024``
        - ``bootstrap`` = ``True`` and/or ``max_samples`` != ``None`` are not supported when there are sample weights
-       - Non-integer ``max_samples`` larger than 1 with ``bootstrap=True``
+       - Non-integer ``max_samples`` larger than 1 or integer ``max_samples`` greater than number of rows, with ``bootstrap=True``
      - Multi-output and sparse data are not supported. Missing values and infinite values are not supported.
    * - :obj:`sklearn.neighbors.KNeighborsRegressor`
      - All parameters are supported except:
@@ -784,7 +801,6 @@ Nearest Neighbors
      - All parameters are supported except:
 
        - ``algorithm`` != `'brute'`
-       - ``weights`` = `'callable'`
        - ``metric`` not in [`'euclidean'`, `'manhattan'`, `'minkowski'`, `'chebyshev'`, `'cosine'`]
      - Only dense data is supported
 
