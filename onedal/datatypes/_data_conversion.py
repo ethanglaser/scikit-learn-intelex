@@ -124,7 +124,12 @@ def return_type_constructor(array):
     elif hasattr(array, "__array_namespace__"):
         xp = array.__array_namespace__()
         device = array.device
-        func = lambda inp: xp.from_dlpack(inp, device=device)
+
+        def func(inp):
+            try:
+                return xp.from_dlpack(inp, device=device)
+            except RuntimeError:
+                return xp.asarray(backend.from_table(inp), device=device)
     else:
         try:
             func = _compat_convert(array)
