@@ -110,8 +110,9 @@ def test_sklearnex_binary_classification(dataframe, queue):
 
 if daal_check_version((2024, "P", 700)):
 
-    @pytest.mark.parametrize("queue", get_queues("gpu"))
-    @pytest.mark.parametrize("dtype", [np.float32, np.float64])
+    @pytest.mark.parametrize(
+        "queue,dtype", get_queues("gpu", dtypes=[np.float32, np.float64])
+    )
     @pytest.mark.parametrize(
         "dims", [(3007, 17, 0.05), (50000, 100, 0.01), (512, 10, 0.5)]
     )

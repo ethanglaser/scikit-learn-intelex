@@ -27,9 +27,11 @@ from onedal.tests.utils._dataframes_support import (
 from sklearnex.basic_statistics import IncrementalBasicStatistics
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_partial_fit_multiple_options_on_gold_data(dataframe, queue, weighted, dtype):
     X = np.array([[0, 0], [1, 1]])
     X = X.astype(dtype=dtype)
@@ -68,13 +70,15 @@ def test_partial_fit_multiple_options_on_gold_data(dataframe, queue, weighted, d
         assert_allclose(expected_min, result.min_)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("result_option", options_and_tests.keys())
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_partial_fit_single_option_on_random_data(
     dataframe, queue, num_batches, result_option, row_count, column_count, weighted, dtype
 ):
@@ -114,12 +118,14 @@ def test_partial_fit_single_option_on_random_data(
     assert_allclose(gtr, res, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_partial_fit_multiple_options_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, weighted, dtype
 ):
@@ -167,12 +173,14 @@ def test_partial_fit_multiple_options_on_random_data(
     assert_allclose(gtr_sum, res_sum, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_partial_fit_all_option_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, weighted, dtype
 ):
@@ -214,9 +222,11 @@ def test_partial_fit_all_option_on_random_data(
         assert_allclose(gtr, res, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_fit_multiple_options_on_gold_data(dataframe, queue, weighted, dtype):
     X = np.array([[0, 0], [1, 1]])
     X = X.astype(dtype=dtype)
@@ -248,13 +258,15 @@ def test_fit_multiple_options_on_gold_data(dataframe, queue, weighted, dtype):
         assert_allclose(expected_min, result.min_)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("result_option", options_and_tests.keys())
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_fit_single_option_on_random_data(
     dataframe, queue, num_batches, result_option, row_count, column_count, weighted, dtype
 ):
@@ -290,12 +302,14 @@ def test_fit_single_option_on_random_data(
     assert_allclose(gtr, res, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_fit_multiple_options_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, weighted, dtype
 ):
@@ -339,12 +353,14 @@ def test_fit_multiple_options_on_random_data(
     assert_allclose(gtr_sum, res_sum, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
 @pytest.mark.parametrize("weighted", [True, False])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_fit_all_option_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, weighted, dtype
 ):
@@ -380,8 +396,10 @@ def test_fit_all_option_on_random_data(
         assert_allclose(gtr, res, atol=tol)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 def test_sklearnex_incremental_estimatior_pickle(dataframe, queue, dtype):
     import pickle
 

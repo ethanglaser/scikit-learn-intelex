@@ -28,8 +28,9 @@ if daal_check_version((2024, "P", 1)):
     from onedal.linear_model import LogisticRegression
     from onedal.tests.utils._device_selection import get_queues
 
-    @pytest.mark.parametrize("queue", get_queues("gpu"))
-    @pytest.mark.parametrize("dtype", [np.float32, np.float64])
+    @pytest.mark.parametrize(
+        "queue,dtype", get_queues("gpu", dtypes=[np.float32, np.float64])
+    )
     def test_breast_cancer(queue, dtype):
         X, y = load_breast_cancer(return_X_y=True)
         X, y = X.astype(dtype), y.astype(dtype)
@@ -47,8 +48,9 @@ if daal_check_version((2024, "P", 1)):
         if daal_check_version((2024, "P", 300)):
             assert hasattr(model, "_n_inner_iter")
 
-    @pytest.mark.parametrize("queue", get_queues("gpu"))
-    @pytest.mark.parametrize("dtype", [np.float32, np.float64])
+    @pytest.mark.parametrize(
+        "queue,dtype", get_queues("gpu", dtypes=[np.float32, np.float64])
+    )
     def test_pickle(queue, dtype):
         X, y = load_breast_cancer(return_X_y=True)
         X, y = X.astype(dtype), y.astype(dtype)
@@ -69,8 +71,9 @@ if daal_check_version((2024, "P", 1)):
 
 if daal_check_version((2024, "P", 700)):
 
-    @pytest.mark.parametrize("queue", get_queues("gpu"))
-    @pytest.mark.parametrize("dtype", [np.float32, np.float64])
+    @pytest.mark.parametrize(
+        "queue,dtype", get_queues("gpu", dtypes=[np.float32, np.float64])
+    )
     @pytest.mark.parametrize(
         "dims", [(3007, 17, 0.05), (50000, 100, 0.01), (512, 10, 0.5)]
     )

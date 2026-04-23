@@ -82,10 +82,13 @@ def test_covariance_spmd_gold(dataframe, queue):
 @pytest.mark.parametrize("n_features", [10, 100])
 @pytest.mark.parametrize("assume_centered", [True, False])
 @pytest.mark.parametrize(
-    "dataframe,queue",
-    get_dataframes_and_queues(dataframe_filter_="dpnp", device_filter_="gpu"),
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(
+        dataframe_filter_="dpnp",
+        device_filter_="gpu",
+        dtypes=[np.float32, np.float64],
+    ),
 )
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("array_api_dispatch", [True, False])
 @pytest.mark.mpi
 def test_covariance_spmd_synthetic(

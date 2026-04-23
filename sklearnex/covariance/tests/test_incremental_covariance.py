@@ -36,8 +36,10 @@ from onedal.tests.utils._dataframes_support import (
 )
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("assume_centered", [True, False])
 def test_sklearnex_partial_fit_on_gold_data(dataframe, queue, dtype, assume_centered):
     is_gpu = queue is not None and queue.sycl_device.is_gpu
@@ -90,9 +92,11 @@ def test_sklearnex_partial_fit_on_gold_data(dataframe, queue, dtype, assume_cent
     assert_allclose(expected_means, result.location_)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("batch_size", [2, 4])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_sklearnex_fit_on_gold_data(dataframe, queue, batch_size, dtype):
     from sklearnex.covariance import IncrementalEmpiricalCovariance
 
@@ -112,11 +116,13 @@ def test_sklearnex_fit_on_gold_data(dataframe, queue, batch_size, dtype):
     assert_allclose(expected_means, result.location_)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_sklearnex_partial_fit_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, dtype
 ):
@@ -142,11 +148,13 @@ def test_sklearnex_partial_fit_on_random_data(
     assert_allclose(expected_means, result.location_, atol=1e-6)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 @pytest.mark.parametrize("num_batches", [2, 10])
 @pytest.mark.parametrize("row_count", [100, 1000])
 @pytest.mark.parametrize("column_count", [10, 100])
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
 @pytest.mark.parametrize("assume_centered", [True, False])
 def test_sklearnex_fit_on_random_data(
     dataframe, queue, num_batches, row_count, column_count, dtype, assume_centered
@@ -211,8 +219,10 @@ def test_whitened_toy_score(dataframe, queue):
     assert_allclose(expected_result, result, atol=1e-6)
 
 
-@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues())
-@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize(
+    "dataframe,queue,dtype",
+    get_dataframes_and_queues(dtypes=[np.float32, np.float64]),
+)
 def test_sklearnex_incremental_estimatior_pickle(dataframe, queue, dtype):
     import pickle
 
