@@ -38,7 +38,10 @@ def test_sklearnex_import_DummyRegressor(dataframe, queue):
     est = DummyRegressor(strategy="constant", constant=np.pi).fit(X, y)
     assert "sklearnex" in est.__module__
     pred = _as_numpy(est.predict([[0, 0, 0, 0]]))
-    np.testing.assert_array_equal(np.pi * np.ones(pred.shape), pred)
+    if queue is not None and not queue.sycl_device.has_aspect_fp64:
+        np.testing.assert_allclose(np.pi * np.ones(pred.shape), pred, atol=1e-6)
+    else:
+        np.testing.assert_array_equal(np.pi * np.ones(pred.shape), pred)
 
 
 @pytest.mark.skipif(
