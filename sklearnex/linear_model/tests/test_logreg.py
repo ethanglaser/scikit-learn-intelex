@@ -127,7 +127,7 @@ if daal_check_version((2024, "P", 700)):
         X = X.astype(dtype)
         y = y.astype(dtype)
         np.random.seed(2007 + n + p)
-        mask = np.random.binomial(1, density, (n, p))
+        mask = np.random.binomial(1, density, (n, p)).astype(dtype)
         X = X * mask
         X_sp = csr_matrix(X)
 

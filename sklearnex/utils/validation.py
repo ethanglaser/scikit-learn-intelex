@@ -164,6 +164,31 @@ else:
         )
 
 
+def _filter_dtypes_for_device(dtype, X):
+    # On sycl devices without fp64 aspect (e.g. Arc A770), attempting to
+    # allocate a float64 array raises inside dpctl. sklearnex's idiomatic
+    # ``dtype=[xp.float64, xp.float32]`` then misbehaves: any non-float input
+    # gets coerced to the first entry (fp64) by ``check_array``. Strip fp64
+    # from the hint when the target device cannot support it so the fp32
+    # fallback is selected instead.
+    device = getattr(X, "device", None)
+    sycl_dev = getattr(device, "sycl_device", device)
+    if sycl_dev is None or not hasattr(sycl_dev, "has_aspect_fp64"):
+        return dtype
+    if sycl_dev.has_aspect_fp64:
+        return dtype
+
+    xp, _ = get_namespace(X)
+    if isinstance(dtype, (list, tuple)):
+        filtered = [d for d in dtype if d != xp.float64]
+        if not filtered:
+            return xp.float32
+        return type(dtype)(filtered)
+    if dtype == xp.float64:
+        return xp.float32
+    return dtype
+
+
 @add_dispatcher_docstring(_sklearn_validate_data)
 def validate_data(
     _estimator,
@@ -177,6 +202,9 @@ def validate_data(
     # _finite_keyword provides backward compatibility for `force_all_finite`
     ensure_all_finite = kwargs.pop("ensure_all_finite", True)
     kwargs[_finite_keyword] = False
+
+    if "dtype" in kwargs and not (isinstance(X, str) and X == "no_validation"):
+        kwargs["dtype"] = _filter_dtypes_for_device(kwargs["dtype"], X)
 
     out = _sklearn_validate_data(
         _estimator,
@@ -221,7 +249,10 @@ def validate_data(
         yp, _ = get_namespace(outy)
 
         # avoid using ``kwargs.get("dtype")`` as it will always set up the default
-        dtype = kwargs.get("dtype", (yp.float64, yp.float32, yp.int32))
+        dtype = kwargs.get(
+            "dtype",
+            _filter_dtypes_for_device((yp.float64, yp.float32, yp.int32), outy),
+        )
         if not isinstance(dtype, Sequence):
             dtype = tuple(dtype)
 
@@ -278,24 +309,29 @@ def _check_sample_weight_internal(
     n_samples = _num_samples(X)
     xp, _ = get_namespace(X)
 
-    if dtype is not None and dtype not in [xp.float32, xp.float64]:
-        dtype = xp.float64
+    if dtype is not None:
+        dtype = _filter_dtypes_for_device(dtype, X)
+        scalar_dtype = dtype[0] if isinstance(dtype, (list, tuple)) else dtype
+        if scalar_dtype not in [xp.float32, xp.float64]:
+            scalar_dtype = _filter_dtypes_for_device(xp.float64, X)
+    else:
+        scalar_dtype = None
 
     if sample_weight is None:
         if hasattr(X, "device"):
-            sample_weight = xp.ones(n_samples, dtype=dtype, device=X.device)
+            sample_weight = xp.ones(n_samples, dtype=scalar_dtype, device=X.device)
         else:
-            sample_weight = xp.ones(n_samples, dtype=dtype)
+            sample_weight = xp.ones(n_samples, dtype=scalar_dtype)
     elif isinstance(sample_weight, numbers.Number):
         if hasattr(X, "device"):
             sample_weight = xp.full(
-                n_samples, sample_weight, dtype=dtype, device=X.device
+                n_samples, sample_weight, dtype=scalar_dtype, device=X.device
             )
         else:
-            sample_weight = xp.full(n_samples, sample_weight, dtype=dtype)
+            sample_weight = xp.full(n_samples, sample_weight, dtype=scalar_dtype)
     else:
         if dtype is None:
-            dtype = [xp.float64, xp.float32]
+            dtype = _filter_dtypes_for_device([xp.float64, xp.float32], X)
 
         params = {
             "accept_sparse": False,
