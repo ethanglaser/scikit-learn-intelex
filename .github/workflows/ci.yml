@@ -116,8 +116,8 @@ jobs:
       - name: dpcpp installation
         run: |
           # This CI system yields oneAPI dependencies from the oneDAL repository
-          # Temporarily pin runtime-libs until oneDAL apt.sh fix lands
-          sed -i 's|intel-oneapi-runtime-libs$|intel-oneapi-runtime-libs=2025.3.0-177|' .ci/env/apt.sh
+          # Temporarily bump dpcpp compiler to 2026.0 to match newly-released runtime libs
+          sed -i 's|intel-oneapi-compiler-dpcpp-cpp=2025.3.3-30|intel-oneapi-compiler-dpcpp-cpp=2026.0.0-947|' .ci/env/apt.sh
           bash .ci/env/apt.sh dpcpp
       - name: describe system
         run: |
@@ -366,8 +366,8 @@ jobs:
       - name: dpcpp installation
         run: |
           # This CI system yields oneAPI dependencies from the oneDAL repository
-          # Temporarily pin runtime-libs until oneDAL apt.sh fix lands
-          sed -i 's|intel-oneapi-runtime-libs$|intel-oneapi-runtime-libs=2025.3.0-177|' .ci/env/apt.sh
+          # Temporarily bump dpcpp compiler to 2026.0 to match newly-released runtime libs
+          sed -i 's|intel-oneapi-compiler-dpcpp-cpp=2025.3.3-30|intel-oneapi-compiler-dpcpp-cpp=2026.0.0-947|' .ci/env/apt.sh
           bash .ci/env/apt.sh dpcpp
       - name: describe system
         run: |
@@ -449,8 +449,8 @@ jobs:
       - name: dpcpp installation
         run: |
           # This CI system yields oneAPI dependencies from the oneDAL repository
-          # Temporarily pin runtime-libs until oneDAL apt.sh fix lands
-          sed -i 's|intel-oneapi-runtime-libs$|intel-oneapi-runtime-libs=2025.3.0-177|' .ci/env/apt.sh
+          # Temporarily bump dpcpp compiler to 2026.0 to match newly-released runtime libs
+          sed -i 's|intel-oneapi-compiler-dpcpp-cpp=2025.3.3-30|intel-oneapi-compiler-dpcpp-cpp=2026.0.0-947|' .ci/env/apt.sh
           bash .ci/env/apt.sh dpcpp
       - name: describe system
         run: |
