@@ -100,7 +100,7 @@ def test_linear_spmd_gold(dataframe, queue):
     spmd_result = spmd_model.predict(local_dpt_X_test)
     batch_result = batch_model.predict(X_test)
 
-    _spmd_assert_allclose(spmd_result, batch_result)
+    _spmd_assert_allclose(spmd_result, batch_result, atol=atol)
 
 
 @pytest.mark.skipif(

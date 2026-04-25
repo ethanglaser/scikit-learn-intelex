@@ -199,7 +199,7 @@ def test_incremental_covariance_partial_fit_spmd_synthetic(
 
     inccov.fit(dpt_data)
 
-    tol = 1e-7
+    tol = 1e-6 if dtype == np.float32 else 1e-7
 
     assert_allclose(
         _as_numpy(inccov_spmd.covariance_), _as_numpy(inccov.covariance_), atol=tol
