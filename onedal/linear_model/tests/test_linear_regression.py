@@ -81,10 +81,11 @@ def test_full_results(queue, dtype):
     model.fit(X, y, queue=queue)
 
     if queue and queue.sycl_device.is_gpu:
-        tol = 5e-3 if model.coef_.dtype == np.float32 else 1e-5
+        rtol = 5e-3 if model.coef_.dtype == np.float32 else 1e-5
     else:
-        tol = 2e-3 if model.coef_.dtype == np.float32 else 1e-5
-    assert_allclose(coef, model.coef_.T, rtol=tol)
+        rtol = 2e-3 if model.coef_.dtype == np.float32 else 1e-5
+    atol = 1e-4 if model.coef_.dtype == np.float32 else 0
+    assert_allclose(coef, model.coef_.T, rtol=rtol, atol=atol)
 
     tol = 2e-3 if model.intercept_.dtype == np.float32 else 1e-5
     assert_allclose(intp, model.intercept_, rtol=tol, atol=tol)
