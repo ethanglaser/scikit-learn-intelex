@@ -140,7 +140,8 @@ jobs:
           bash .ci/scripts/setup_sklearn.sh ${{ matrix.SKLEARN_VERSION }}
           pip install --upgrade -r requirements-test.txt
           pip install $(python .ci/scripts/get_compatible_scipy_version.py ${{ matrix.SKLEARN_VERSION }}) pyyaml
-          if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then pip install dpctl==${{ env.DPCTL_VERSION }} dpnp==${{ env.DPNP_VERSION }}; fi
+          # Temporarily disabled: dpctl/dpnp removed from public validation
+          # if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then pip install dpctl==${{ env.DPCTL_VERSION }} dpnp==${{ env.DPNP_VERSION }}; fi
           pip list
       - name: Sklearnex testing
         run: |
@@ -154,7 +155,8 @@ jobs:
           source venv/bin/activate
           source .github/scripts/activate_components.sh
           export COVERAGE_FILE=$(pwd)/.coverage.sklearn
-          if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then export CPU=cpu; fi
+          # Temporarily disabled: dpctl/dpnp removed from public validation
+          # if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then export CPU=cpu; fi
           bash .ci/scripts/run_sklearn_tests.sh $CPU
       - name: Create coverage report
         run: |
@@ -171,7 +173,8 @@ jobs:
         run: |
           source venv/bin/activate
           source .github/scripts/activate_components.sh
-          if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then export CPU=cpu; fi
+          # Temporarily disabled: dpctl/dpnp removed from public validation
+          # if [ "${{ steps.set-env.outputs.DPCFLAG }}" == "" ]; then export CPU=cpu; fi
           export SKLEARNEX_PREVIEW='YES'
           bash .ci/scripts/run_sklearn_tests.sh $CPU
 
@@ -278,7 +281,8 @@ jobs:
           pip install --upgrade -r requirements-test.txt
           for /f "delims=" %%c in ('python .ci\scripts\get_compatible_scipy_version.py ${{ matrix.SKLEARN_VERSION }}') do set SCIPY_VERSION=%%c
           pip install %SCIPY_VERSION%
-          if "${{ steps.set-env.outputs.DPCFLAG }}"=="" pip install dpctl==${{ env.DPCTL_VERSION }} dpnp==${{ env.DPNP_VERSION }}
+          rem Temporarily disabled: dpctl/dpnp removed from public validation
+          rem if "${{ steps.set-env.outputs.DPCFLAG }}"=="" pip install dpctl==${{ env.DPCTL_VERSION }} dpnp==${{ env.DPNP_VERSION }}
           pip list
       - name: Sklearnex testing
         shell: cmd
@@ -295,7 +299,8 @@ jobs:
           call .\venv\Scripts\activate.bat
           call .\.github\scripts\activate_components.bat ${{ steps.set-env.outputs.DPCFLAG }}
           set COVERAGE_FILE=%cd%\.coverage.sklearn
-          if "${{ steps.set-env.outputs.DPCFLAG }}"=="" set CPU=cpu
+          rem Temporarily disabled: dpctl/dpnp removed from public validation
+          rem if "${{ steps.set-env.outputs.DPCFLAG }}"=="" set CPU=cpu
           bash .ci/scripts/run_sklearn_tests.sh %CPU%
       - name: Create coverage report
         shell: cmd
@@ -314,7 +319,8 @@ jobs:
         run: |
           call .\venv\Scripts\activate.bat
           call .\.github\scripts\activate_components.bat ${{ steps.set-env.outputs.DPCFLAG }}
-          if "${{ steps.set-env.outputs.DPCFLAG }}"=="" set CPU=cpu
+          rem Temporarily disabled: dpctl/dpnp removed from public validation
+          rem if "${{ steps.set-env.outputs.DPCFLAG }}"=="" set CPU=cpu
           set SKLEARNEX_PREVIEW=YES
           bash .ci/scripts/run_sklearn_tests.sh %CPU%
 
