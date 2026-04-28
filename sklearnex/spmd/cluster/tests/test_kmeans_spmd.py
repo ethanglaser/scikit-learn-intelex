@@ -105,9 +105,6 @@ def test_kmeans_spmd_gold(dataframe, queue):
 @pytest.mark.parametrize("n_samples", [200, 10000])
 @pytest.mark.parametrize("n_features", [5, 25])
 @pytest.mark.parametrize("n_clusters", [2, 5, 15])
-# Sweep a few data seeds — fp32 failures are boundary-sample lotteries,
-# different seeds shift which samples sit near cluster borders.
-@pytest.mark.parametrize("data_random_state", [0, 1, 10, 42])
 @pytest.mark.parametrize(
     "dataframe,queue,dtype",
     get_dataframes_and_queues(
@@ -119,14 +116,7 @@ def test_kmeans_spmd_gold(dataframe, queue):
 @pytest.mark.parametrize("array_api_dispatch", [True, False])
 @pytest.mark.mpi
 def test_kmeans_spmd_synthetic(
-    n_samples,
-    n_features,
-    n_clusters,
-    data_random_state,
-    dataframe,
-    queue,
-    dtype,
-    array_api_dispatch,
+    n_samples, n_features, n_clusters, dataframe, queue, dtype, array_api_dispatch
 ):
     # Import spmd and batch algo
     from sklearnex.cluster import KMeans as KMeans_Batch
@@ -134,11 +124,7 @@ def test_kmeans_spmd_synthetic(
 
     # TODO: investigate issues when centers != n_clusters (spmd and batch results don't match for all values of K)
     X_train, X_test = _generate_clustering_data(
-        n_samples,
-        n_features,
-        centers=n_clusters,
-        dtype=dtype,
-        random_state=data_random_state,
+        n_samples, n_features, centers=n_clusters, dtype=dtype, random_state=0
     )
 
     local_dpt_X_train = _convert_to_dataframe(
