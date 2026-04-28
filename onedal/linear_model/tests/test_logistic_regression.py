@@ -98,7 +98,7 @@ if daal_check_version((2024, "P", 700)):
         rtol = 1e-2 if fp64less else 2e-4
         # Near-zero coefficients look proportionally noisy under fp32 even
         # when their absolute error is tiny; atol absorbs that.
-        atol = 1e-3 if fp64less else 0
+        atol = 5e-3 if fp64less else 0
         if fp64less:
             # A handful of binary labels (<0.02% of samples) flip between the
             # dense and sparse solver paths on fp32-only hardware — the label

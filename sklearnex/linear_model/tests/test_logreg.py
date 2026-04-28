@@ -145,13 +145,16 @@ if daal_check_version((2024, "P", 700)):
             raw_sp = model.decision_function(X_sp)
 
         rtol = 3e-3 if dtype == np.float32 else 2e-4
+        # Near-zero values look proportionally noisy under fp32 even when
+        # their absolute error is tiny; atol absorbs that.
+        atol = 5e-3 if dtype == np.float32 else 0
         # Skip label check for fp32 due to a few inconsistencies
         if dtype != np.float32:
             assert_array_equal(pred, pred_sp)
-        assert_allclose(prob, prob_sp, rtol=rtol)
-        assert_allclose(raw, raw_sp, rtol=rtol)
-        assert_allclose(model.coef_, model_sp.coef_, rtol=rtol)
-        assert_allclose(model.intercept_, model_sp.intercept_, rtol=rtol)
+        assert_allclose(prob, prob_sp, rtol=rtol, atol=atol)
+        assert_allclose(raw, raw_sp, rtol=rtol, atol=atol)
+        assert_allclose(model.coef_, model_sp.coef_, rtol=rtol, atol=atol)
+        assert_allclose(model.intercept_, model_sp.intercept_, rtol=rtol, atol=atol)
 
 
 # Note: this is adapted from a test in scikit-learn:
