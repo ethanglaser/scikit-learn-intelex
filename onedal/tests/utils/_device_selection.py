@@ -15,11 +15,13 @@
 # ==============================================================================
 
 import functools
+import warnings
 from collections.abc import Iterable
 
 import numpy as np
 import pytest
 
+from onedal import _dpc_backend
 from onedal.utils._third_party import SyclQueue, dpctl_available
 
 if dpctl_available:
@@ -87,6 +89,12 @@ def get_queues(filter_: str = "cpu,gpu", dtypes=None):
     raw_queues = []
     if "cpu" in filter_:
         raw_queues.append((None, None))
+    if _dpc_backend is None:
+        if "gpu" in filter_:
+            warnings.warn(
+                "Attempting to get a GPU queue, but DPC backend is not available."
+            )
+        return queues
 
     for i in filter_.split(","):
         try:
