@@ -131,7 +131,11 @@ class IncrementalBasicStatistics(BasicStatistics):
         X_table, sample_weight_table = to_table(X, sample_weight, queue=queue)
 
         if not hasattr(self, "_onedal_params"):
-            self._onedal_params = self._get_onedal_params(False, dtype=X.dtype)
+            # Use the table's dtype rather than ``X.dtype``: ``to_table``
+            # downcasts fp64 inputs to fp32 on fp64-less devices, and the
+            # oneDAL kernel must be dispatched with the dtype that was
+            # actually materialised.
+            self._onedal_params = self._get_onedal_params(False, dtype=X_table.dtype)
 
         self._partial_result = self.partial_compute(
             self._onedal_params, self._partial_result, X_table, sample_weight_table
