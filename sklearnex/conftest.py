@@ -16,8 +16,15 @@
 
 import io
 import logging
+import os
+import sys
 
 import pytest
+
+if sys.platform == "win32":
+    _dpcpproot = os.environ.get("DPCPPROOT")
+    if _dpcpproot:
+        os.add_dll_directory(os.path.join(_dpcpproot, "bin"))
 
 from daal4py.sklearn._utils import sklearn_check_version
 from sklearnex import config_context, patch_sklearn, unpatch_sklearn
