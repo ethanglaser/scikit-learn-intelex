@@ -28,6 +28,22 @@ def _apply_and_pass(func, *args, **kwargs):
     return tuple(map(lambda arg: func(arg, **kwargs), args))
 
 
+class _HostCapsule:
+    """Exposes an already-obtained host-device dlpack capsule as a minimal
+    dlpack-exporting object, so it can be consumed by 'np.from_dlpack'."""
+
+    __slots__ = ("_capsule",)
+
+    def __init__(self, capsule):
+        self._capsule = capsule
+
+    def __dlpack__(self, *, stream=None, max_version=None, dl_device=None, copy=None):
+        return self._capsule
+
+    def __dlpack_device__(self):
+        return cpu_dlpack_device
+
+
 def _convert_one_to_table(arg, queue=None):
     # All inputs for table conversion must be array-like or sparse, not scalars
     return backend.to_table(np.atleast_2d(arg) if np.isscalar(arg) else arg, queue)
@@ -130,13 +146,18 @@ def return_type_constructor(array):
             # the 'device' argument of their 'from_dlpack' to the exporter's
             # '__dlpack__', so a oneDAL table on a SYCL device never gets asked
             # to transfer to host when the target namespace is host-only.
-            # NumPy's 'from_dlpack' does forward it, so route through NumPy
-            # first in that case, then hand the resulting host array to 'xp'.
+            # Request that transfer directly from the table itself in that
+            # case (mirroring how NumPy's own 'from_dlpack' would do it),
+            # then hand the resulting host capsule to 'xp' via NumPy, which
+            # does forward device transfer requests correctly.
             if (
                 inp.__dlpack_device__() != cpu_dlpack_device
                 and array.__dlpack_device__() == cpu_dlpack_device
             ):
-                return xp.asarray(np.from_dlpack(inp, device="cpu"), device=device)
+                host_capsule = inp.__dlpack__(dl_device=cpu_dlpack_device, copy=True)
+                return xp.asarray(
+                    np.from_dlpack(_HostCapsule(host_capsule)), device=device
+                )
             return xp.from_dlpack(inp, device=device)
 
     else:
