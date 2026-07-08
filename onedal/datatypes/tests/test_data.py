@@ -606,20 +606,23 @@ def test_table_convert_to_host_dlpack(dataframe, queue, order, data_shape, dtype
     assert X_out.flags.writeable
 
 
-@pytest.mark.parametrize("queue", get_queues("gpu"))
+@pytest.mark.parametrize("dataframe,queue", get_dataframes_and_queues("dpnp", "gpu"))
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
-def test_return_type_constructor_array_api_host_from_gpu_table(queue, dtype):
-    """array_api_strict devices are host-only, but a global GPU queue can still
-    cause oneDAL to produce a SYCL-device table for such inputs. Converting that
-    table back via ``return_type_constructor`` must transfer it to host rather
-    than raising (array_api_strict's ``from_dlpack`` does not forward the
-    'device' argument to the exporter to request that transfer itself).
+def test_return_type_constructor_array_api_host_from_gpu_table(dataframe, queue, dtype):
+    """array_api_strict devices are host-only, but a SYCL-device input produces
+    a SYCL-device table. Converting that table back to a host-only namespace via
+    ``return_type_constructor`` must transfer it to host rather than raising
+    (array_api_strict's ``from_dlpack`` does not forward the 'device' argument to
+    the exporter to request that transfer itself).
     """
     rng = np.random.RandomState(0)
     X = np.array(rng.random_sample((5, 3)), dtype=dtype)
 
-    # table produced on a real SYCL/GPU queue
-    X_table = to_table(X, queue=queue)
+    # SYCL-device-resident table (a host numpy input would yield a CPU table and
+    # would not exercise the host-transfer branch this test guards).
+    X_df = _convert_to_dataframe(X, sycl_queue=queue, target_df=dataframe)
+    X_table = to_table(X_df)
+    assert X_table.__dlpack_device__() != (backend.kDLCPU, 0)
 
     # host-only array_api_strict "like" array, mirroring what sklearnex passes
     # when the estimator's input was array API but not on a SYCL device
