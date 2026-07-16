@@ -16,7 +16,6 @@
 
 import os
 
-os.environ["SCIPY_ARRAY_API"] = "1"
 from sklearnex import patch_sklearn
 
 patch_sklearn()

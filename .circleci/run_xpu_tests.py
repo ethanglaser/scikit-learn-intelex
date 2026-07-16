@@ -15,11 +15,10 @@
 # limitations under the License.
 # ==============================================================================
 
+import argparse
+
 # coding: utf-8
 import os
-
-os.environ["SCIPY_ARRAY_API"] = "1"
-import argparse
 
 import pytest
 
