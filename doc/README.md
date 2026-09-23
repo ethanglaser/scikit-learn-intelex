@@ -37,6 +37,6 @@ To build Extension for scikit-Learn documentation locally:
 
 		cd scikit-learn-intelex/doc
 
-5. Run the ``build-doc.sh`` script. 
+5. Run the ``build-doc.sh`` script.
 
 You will then find documentation under the `_build/html` folder.

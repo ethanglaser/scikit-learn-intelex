@@ -15,7 +15,7 @@
 #===============================================================================
 [run]
 branch = True
-source = 
+source =
     sklearnex
     onedal
 parallel = True

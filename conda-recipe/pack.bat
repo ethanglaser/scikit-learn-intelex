@@ -48,7 +48,7 @@ set "STAGED_PREFIX=!STAGED_ONEDAL:\Lib\site-packages\onedal=!"
 
 IF /I "%PKG_NAME%"=="scikit-learn-intelex" (
     rem Copy everything from the staged sys.prefix into %PREFIX%, then strip
-    rem the DPC backend .pyd files — they belong to scikit-learn-intelex-gpu.
+    rem the DPC backend .pyd files - they belong to scikit-learn-intelex-gpu.
     rem robocopy (not xcopy) handles staged paths exceeding the 260-char limit.
     robocopy "%STAGED_PREFIX%" "%PREFIX%" /e /np /nfl /ndl /njh /njs >nul
     if !errorlevel! GEQ 8 exit /b 1

@@ -107,7 +107,7 @@ if "Windows" in platform.system():
 # Used by _ensure_dpc_available() to surface actionable error messages.
 # Only populated when the backend .so file exists but fails to import
 # (e.g. missing SYCL runtime). Stays empty when the package is simply
-# not installed — in that case "No module named X" is not informative.
+# not installed - in that case "No module named X" is not informative.
 _dpc_load_error: str = ""
 _spmd_load_error: str = ""
 

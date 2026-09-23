@@ -38,7 +38,7 @@ mkdir -p $TEMP_DOC_FOLDER
 # Function to sync content from a branch to the temp folder
 sync_from_branch() {
     local branch_name=$1
-    
+
     if git ls-remote --heads origin $branch_name | grep -q $branch_name; then
         echo "$branch_name branch exists, syncing content..."
         git fetch origin $branch_name:$branch_name
@@ -95,10 +95,10 @@ if git ls-remote --heads origin "$STORAGE_BRANCH" | grep -q "$STORAGE_BRANCH"; t
     echo "Storage branch exists, fetching it..."
     git fetch origin $STORAGE_BRANCH
     git checkout $STORAGE_BRANCH
-    
+
     # Add only the new version directory
     mkdir -p $SHORT_DOC_VERSION
-    rsync -av $TEMP_DOC_FOLDER/$SHORT_DOC_VERSION/ $SHORT_DOC_VERSION/    
+    rsync -av $TEMP_DOC_FOLDER/$SHORT_DOC_VERSION/ $SHORT_DOC_VERSION/
     git add $SHORT_DOC_VERSION
     git commit -m "Add documentation for version $SHORT_DOC_VERSION"
 else
@@ -113,9 +113,9 @@ else
         mkdir -p $version
         rsync -av "$version_dir/" $version/
     done
-    
+
     # Git only add version folders
-    git add -- [0-9][0-9][0-9][0-9].[0-9]* 
+    git add -- [0-9][0-9][0-9][0-9].[0-9]*
     git commit -m "Initialize doc archive branch with all versions"
 fi
 

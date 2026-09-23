@@ -24,10 +24,10 @@ Parallelism Specifics
   while |sklearn| enables it for selected estimators only.
 * ``n_jobs`` estimator parameter sets the number of threads used by the underlying |onedal|.
 * |sklearnex| doesn't use :mod:`joblib` for parallelism in patched estimators and functions.
-* The only low-level parallelism library used by |sklearnex| is `oneTBB <https://github.com/uxlfoundation/oneTBB>`__ 
+* The only low-level parallelism library used by |sklearnex| is `oneTBB <https://github.com/uxlfoundation/oneTBB>`__
   (through the |onedal| and `oneMKL <https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html>`__).
 * If ``n_jobs`` is not specified, |sklearnex| uses all available threads whereas |sklearn| is single-threaded by default.
-  Note that the deprecated :doc:`daal4py <daal4py>` module uses a global configuration instead of per-object ``n_jobs`` arguments, 
+  Note that the deprecated :doc:`daal4py <daal4py>` module uses a global configuration instead of per-object ``n_jobs`` arguments,
   with the default also being all available threads.
 
 .. hint::
@@ -49,7 +49,7 @@ Parallelism Specifics
 |sklearnex| follows the same rules as |sklearn| for
 the calculation of the :term:`n_jobs` parameter value.
 
-When |sklearn|'s utilities with built-in parallelism are used 
+When |sklearn|'s utilities with built-in parallelism are used
 (for example, :obj:`sklearn.model_selection.GridSearchCV` or :obj:`sklearn.model_selection.VotingClassifier`),
 |sklearnex| tries to determine the optimal number of threads per job using hints provided by :mod:`joblib` / ``threadpoolctl``.
 If ``n_jobs`` is not specified for underlying estimator(s), |sklearnex| sets it to the number of available threads
@@ -98,7 +98,7 @@ Other considerations
 
 .. note::
     Environment variables such as ``OMP_NUM_THREADS``, ``MKL_NUM_THREADS``, ``OPENBLAS_NUM_THREADS``, and others used by
-    low-level parallelism libraries do not affect |sklearnex|, nor does the 
+    low-level parallelism libraries do not affect |sklearnex|, nor does the
     `mkl-service <https://github.com/IntelPython/mkl-service>`__ package.
 
 .. note::

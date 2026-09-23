@@ -7,7 +7,7 @@
 # Docs
 *.md                          @maria-Petrova @napetrov @icfaust @david-cortes-intel @Vika-F @syakov-intel @yuejiaointel
 doc/                          @maria-Petrova @icfaust @david-cortes-intel @Vika-F @syakov-intel @yuejiaointel
-requirements-doc.txt          @icfaust @david-cortes-intel 
+requirements-doc.txt          @icfaust @david-cortes-intel
 
 # sklearnex
 onedal/                       @icfaust @ethanglaser @Vika-F @david-cortes-intel

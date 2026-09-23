@@ -32,15 +32,15 @@ if [[ -n "${SKLEARNEX_GCOV}" ]]; then
     echo $GCOV_EXE
     FILTER=.*onedal/.*
     echo $FILTER
-    
+
     NUMPY_TEST=$(python -m pip freeze | grep numpy)
     # install dependencies
     # proper operation of gcov with sklearnex requires the header files from
     # the build numpy, this must be previously set as NUMPY_BUILD
     python -m pip install gcovr $NUMPY_BUILD
-    
+
     gcovr --gcov-executable "${GCOV_EXE}" -r . -v --lcov --filter "${FILTER}" --gcov-object-directory build/ --gcov-ignore-errors=source_not_found -o coverage_cpp_"${1}".info
-    
+
     # reinstall previous numpy
     python -m pip install $NUMPY_TEST
 fi

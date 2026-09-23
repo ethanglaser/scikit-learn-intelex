@@ -209,7 +209,7 @@ def test_conversion_to_table(dtype):
 @pytest.mark.parametrize("order", ["C", "F"])
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.int32, np.int64])
 def test_input_zero_copy_sycl_usm(dataframe, queue, order, dtype):
-    """Checking that values ​​representing USM allocations `__sycl_usm_array_interface__`
+    """Checking that values representing USM allocations `__sycl_usm_array_interface__`
     are preserved during conversion to onedal table.
     """
     rng = np.random.RandomState(0)
@@ -277,7 +277,7 @@ def test_sliced_view_offset_sycl_usm(dataframe, queue, slicer, dtype):
 @pytest.mark.parametrize("data_shape", data_shapes)
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_table_conversions_sycl_usm(dataframe, queue, order, data_shape, dtype):
-    """Checking that values ​​representing USM allocations `__sycl_usm_array_interface__`
+    """Checking that values representing USM allocations `__sycl_usm_array_interface__`
     are preserved during conversion to onedal table and from onedal table to
     sycl usm array dataformat.
     """

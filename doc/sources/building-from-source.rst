@@ -180,7 +180,7 @@ To build the extensions in-place without installing (recommended for local devel
 Build using conda
 ~~~~~~~~~~~~~~~~~
 
-The |sklearnex| can also be easily built from source with a single command using ``conda-build``. 
+The |sklearnex| can also be easily built from source with a single command using ``conda-build``.
 
 Requirements
 ************

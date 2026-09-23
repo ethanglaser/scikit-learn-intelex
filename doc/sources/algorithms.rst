@@ -136,11 +136,11 @@ Regression
      - Other limitations
    * - :obj:`sklearn.svm.SVR`
      - ``kernel`` must be one of [``"linear"``, ``"rbf"``, ``"poly"``, ``"sigmoid"``]
-     - 
+     -
      - Negative weights are not supported.
    * - :obj:`sklearn.svm.NuSVR`
      - ``kernel`` must be one of [``"linear"``, ``"rbf"``, ``"poly"``, ``"sigmoid"``]
-     - 
+     -
      - Negative weights are not supported.
    * - :obj:`sklearn.ensemble.RandomForestRegressor`
      - All parameters are supported except:
@@ -175,14 +175,14 @@ Regression
 
        ``algorithm`` == ``'ball_tree'`` is not supported.
      - Multi-output and sparse data are not supported
-     - 
+     -
    * - :obj:`sklearn.linear_model.LinearRegression`
      - All parameters are supported except:
 
        - ``sample_weight`` != `None`
        - ``positive`` = `True` (this is supported through the class :obj:`sklearn.linear_model.ElasticNet`)
      - Only dense data is supported.
-     - 
+     -
    * - :obj:`sklearn.linear_model.Ridge`
      - All parameters are supported except:
 
@@ -191,7 +191,7 @@ Regression
        - ``positive`` = `True` (this is supported through the class :obj:`sklearn.linear_model.ElasticNet`)
        - ``alpha`` must be a scalar
      - Only dense data is supported.
-     - 
+     -
    * - :obj:`sklearn.linear_model.ElasticNet`
      - All parameters are supported except:
 
@@ -249,9 +249,9 @@ Dimensionality Reduction
 
        - ``svd_solver`` not in [`'full'`, `'covariance_eigh'`]
      - Sparse data is not supported
-     - 
+     -
    * - :obj:`sklearn.decomposition.IncrementalPCA`
-     - 
+     -
      - Sparse data is not supported
      - Estimator is **only** available in :doc:`preview mode <preview>`.
    * - :obj:`sklearn.manifold.TSNE`
@@ -260,9 +260,9 @@ Dimensionality Reduction
        - ``metric`` != 'euclidean' or `'minkowski'` with ``p`` != `2`
        - ``n_components`` can only be `2`
        - ``method`` != ``"barnes_hut"``
-       
+
      - Sparse data is not supported for the initialization and distance calculation stages.
-     - 
+     -
 
 Anomaly Detection
 *****************
@@ -336,12 +336,12 @@ Other Tasks
    * - :obj:`sklearn.model_selection.train_test_split`
      - All parameters are supported
      - Supported data formats:
-        
+
        - Only dense data is supported
        - Only integer and 32/64-bits floating point types are supported
        - Data with more than 3 dimensions is not supported
        - Only ``np.ndarray``, ``pd.DataFrame`` and ``pd.Series`` inputs are supported.
-     - 
+     -
    * - :obj:`sklearn.metrics.pairwise_distances`
      - All parameters are supported except:
 
@@ -351,7 +351,7 @@ Other Tasks
        - Only dense data is supported
        - ``Y`` must be `None`
        - Input dtype must be `np.float64`
-     - 
+     -
    * - :obj:`sklearn.metrics.roc_auc_score`
      - All parameters are supported except:
 
@@ -360,7 +360,7 @@ Other Tasks
        - ``max_fpr`` != `None`
        - ``multi_class`` != `None`
      - Only binary ``y_true`` is supported
-     - 
+     -
 
 on GPU
 ------
@@ -554,9 +554,9 @@ Dimensionality Reduction
 
        - ``svd_solver`` not in [`'full'`, `'covariance_eigh'`]
      - Sparse data is not supported
-     - 
+     -
    * - :obj:`sklearn.decomposition.IncrementalPCA`
-     - 
+     -
      - Sparse data is not supported
      - Estimator is **only** available in :doc:`preview mode <preview>`. Additional parameter ``svd_solver`` (see :doc:`additional_parameters`) is not supported on GPU.
 
@@ -796,7 +796,7 @@ Dimensionality Reduction
 
        - ``svd_solver`` not in [`'full'`, `'covariance_eigh'`]
      - Sparse data is not supported
-     - 
+     -
    * - :obj:`sklearn.decomposition.IncrementalPCA`
      - All parameters are supported except:
 

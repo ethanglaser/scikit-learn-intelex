@@ -32,7 +32,7 @@ You can use issues to report a problem, make a feature request, or add comments 
 Discussions
 -----------
 
-Visit the `GitHub Discussions <https://github.com/uxlfoundation/scikit-learn-intelex/discussions>`__ to engage with the community, ask questions, or help others. 
+Visit the `GitHub Discussions <https://github.com/uxlfoundation/scikit-learn-intelex/discussions>`__ to engage with the community, ask questions, or help others.
 
 Forum
 -----

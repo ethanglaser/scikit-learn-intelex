@@ -70,7 +70,7 @@ Example converting an XGBoost model:
     import xgboost as xgb
     import daal4py
     from sklearn.datasets import make_regression
-    
+
     X, y = make_regression(n_samples=100, n_features=10, random_state=123)
     dm = xgb.DMatrix(X, y)
     xgb_model = xgb.train(

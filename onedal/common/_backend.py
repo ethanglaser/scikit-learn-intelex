@@ -119,7 +119,7 @@ class BackendFunction:
             from .. import _ensure_dpc_available
 
             # Always raises with install instructions (and ImportError reason if
-            # available). The old generic raise is removed — _ensure_dpc_available
+            # available). The old generic raise is removed - _ensure_dpc_available
             # unconditionally raises when the backend is None.
             _ensure_dpc_available(require_spmd=self.backend.is_spmd)
 

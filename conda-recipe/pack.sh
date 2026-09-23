@@ -60,7 +60,7 @@ TARGET_ONEDAL="${PREFIX}/${RELATIVE_ONEDAL}"
 case "${PKG_NAME}" in
     scikit-learn-intelex)
         # Copy everything from the staged sys.prefix into $PREFIX, then strip
-        # the DPC backend .so files — they belong to scikit-learn-intelex-gpu.
+        # the DPC backend .so files - they belong to scikit-learn-intelex-gpu.
         cp -a "${STAGED_PREFIX}/." "${PREFIX}/"
         find "${TARGET_ONEDAL}" -maxdepth 1 -type f \
             \( -name '_onedal_py_dpc*' -o -name '_onedal_py_spmd_dpc*' \) \
@@ -88,7 +88,7 @@ case "${PKG_NAME}" in
         # _onedal_py_spmd_dpc on build_distributed).
         if [ "${found_dpc}" = "0" ] || { [ -z "${NO_DIST}" ] && [ "${found_spmd}" = "0" ]; }; then
             echo "pack.sh: missing DPC backend .so files in ${STAGED_ONEDAL} (dpc=${found_dpc}, spmd=${found_spmd}, NO_DIST=${NO_DIST})" >&2
-            echo "pack.sh: the top-level build did not produce a full DPC backend — check DPCPPROOT and compiler detection in setup.py" >&2
+            echo "pack.sh: the top-level build did not produce a full DPC backend - check DPCPPROOT and compiler detection in setup.py" >&2
             exit 1
         fi
         ;;

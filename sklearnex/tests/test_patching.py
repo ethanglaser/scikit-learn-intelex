@@ -227,7 +227,7 @@ def _check_output_type(result, y, method, estimator_name, caplog, X, est=None):
         # Skip scalar results
         if np.isscalar(res):
             continue
-        # Sparse outputs — verify sparse class matches sklearn config
+        # Sparse outputs - verify sparse class matches sklearn config
         if is_sparse(res):
             if sklearn_check_version("1.9"):
                 sparse_iface = sklearn_get_config().get("sparse_interface", "spmatrix")
@@ -251,13 +251,13 @@ def _check_output_type(result, y, method, estimator_name, caplog, X, est=None):
                 assert hasattr(res, "device")
                 assert X.device == res.device
 
-            # Check dtype preservation (skip float16 — oneDAL doesn't
+            # Check dtype preservation (skip float16 - oneDAL doesn't
             # support it natively and upcasts to float64)
             x_is_fp16 = (
                 X is not None and hasattr(X, "dtype") and "float16" in str(X.dtype)
             )
             # Clusterers always return int cluster labels
-            # decision_path returns structural int output — skip dtype
+            # decision_path returns structural int output - skip dtype
             if method == "decision_path":
                 continue
             _skip_dtype = (
@@ -295,9 +295,9 @@ _SKIP = {
     ("ElasticNet", "path"): {"output_dtype"},
     ("Lasso", "path"): {"output_dtype"},
     ("IncrementalEmpiricalCovariance", "mahalanobis"): {"output_dtype"},
-    # Attr — always
+    # Attr - always
     ("DummyRegressor", "constant_"): {"attr_type", "attr_device", "attr_dtype"},
-    # Attr — specific
+    # Attr - specific
     ("SVC", "n_iter_"): {"attr_device"},
     ("NuSVC", "n_iter_"): {"attr_device"},
     ("SVC", "probA_"): {"attr_device", "attr_dtype"},
@@ -313,7 +313,7 @@ def _should_skip(estimator_name, name, check):
     return check in _SKIP.get((estimator_name, name), set())
 
 
-# Attrs that must be arrays — assert not scalar.
+# Attrs that must be arrays - assert not scalar.
 _ATTR_CHECK_MUST_BE_ARRAY = {
     "coef_",
     "intercept_",
@@ -412,14 +412,14 @@ def _check_fitted_attributes(est, X, estimator_name, caplog, queue=None):
         if attr_name in _ATTR_CHECK_MUST_BE_ARRAY:
             assert hasattr(attr_val, "ndim") and attr_val.ndim > 0
 
-        # Sparse — check class then skip
+        # Sparse - check class then skip
         if is_sparse(attr_val):
             _check_sparse_class(attr_val)
             continue
 
         key = (estimator_name, attr_name)
 
-        # Known exceptions — skip all
+        # Known exceptions - skip all
         if _should_skip_all_for_attr(
             key, attr_name, est, is_non_numpy_input, fell_back, queue
         ):

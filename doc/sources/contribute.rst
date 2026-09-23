@@ -59,5 +59,3 @@ Optionally, you can install pre-commit hooks that do the formatting for you. For
 
   pip install pre-commit
   pre-commit install
-
-
