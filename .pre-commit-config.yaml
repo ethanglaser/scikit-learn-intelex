@@ -45,3 +45,23 @@ repos:
     hooks:
       - id: codespell
         args: ["--config", ".github/.codespellrc" ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+        exclude: \.csv$|^doc/third-party-programs
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: check-yaml
+        # Jinja-templated
+        exclude: ^conda-recipe/meta\.yaml$
+  - repo: local
+    hooks:
+      - id: ascii-only
+        name: ASCII-only source
+        language: pygrep
+        entry: '[^\x00-\x7F]'
+        types_or: [python, cython, c, c++, shell, batch, yaml, toml]
+        # Deliberately tests a multi-byte separator.
+        exclude: ^onedal/common/tests/test_result_options\.py$
